@@ -14,8 +14,6 @@ export default {
     }
   },
   created () {
-    // let issues = this.$qs.getIssues()
-    // console.log(issues)
   },
   methods: {
   },
