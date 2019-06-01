@@ -80,6 +80,7 @@ export default {
   position absolute
   z-index 90000
 .menu
+  overflow-y auto
   position fixed
   top 0
   left 0
@@ -102,4 +103,6 @@ export default {
     transition all .2s
     &:hover
       transform scale(1.1)
+    &:active
+      transform scale(1, 0)
 </style>

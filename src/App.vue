@@ -44,8 +44,12 @@ export default {
 }
 </script>
 <style lang="stylus">
+@require './assets/fonts/fontsBase'
+*
+  scroll-behavior smooth
 body, html
-  font-family 'Avenir', Helvetica, Arial, sans-serif
+  // font-family 'Avenir', Helvetica, Arial, sans-serif
+  font-family 'Montserrat', sans-serif
   margin 0
   padding 0
   height 100%
@@ -53,6 +57,8 @@ body, html
   overflow hidden
 h1, h2, h3, h4
   margin 0
+h1, h2, h3, h4, p, a, span
+  font-weight 300
 a
   text-decoration none
   color inherit
