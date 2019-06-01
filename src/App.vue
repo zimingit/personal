@@ -6,12 +6,13 @@
     </transition>
     <div v-if="switcher.show" class="preload">
       <!-- <h1>keep calm and waiting</h1> -->
-      <h1>В ж у х</h1>
+      <h1>{{preloader.text}}</h1>
     </div>
   </div>
 </template>
 <script>
 import AppMenu from '@/components/appMenu'
+const preloadersList = ['В ж у х', 'Т р у н ь', 'П и у', 'Т ы щ', 'Б а м', 'К ч а у', 'П а у', 'Ч п о н ь к', 'О п - л я']
 export default {
   data () {
     return {
@@ -20,6 +21,12 @@ export default {
         toggle () {
           this.show = !this.show
           setTimeout(() => { this.show = !this.show }, 150)
+        }
+      },
+      preloader: {
+        items: preloadersList,
+        get text () {
+          return this.items[Math.floor(Math.random() * this.items.length)]
         }
       }
     }
