@@ -30,7 +30,9 @@ const itemList = [
   { key: 'item2', name: 'Abstract Block', over: false, color: '#34a853' },
   { key: 'item3', name: 'Abstract Block', over: false, color: '#fbbc05' },
   { key: 'item4', name: 'Abstract Block', over: false, color: '#ea4335' },
-  { key: 'item5', name: 'Abstract Block', over: false, color: '#00bcd4' }
+  { key: 'item5', name: 'Abstract Block', over: false, color: '#00bcd4' },
+  { key: 'item6', name: 'Abstract Block', over: false, color: '#9c27b0' },
+  { key: 'item7', name: 'Abstract Block', over: false, color: '#795548' }
 ]
 export default {
   name: 'DragDrop',
@@ -44,8 +46,13 @@ export default {
     }
   },
   methods: {
+    prevent (e) {
+      console.log(e)
+      return e.preventDefault()
+    },
     setTouchDragEnd (e, t) {
       document.getElementById('content').removeChild(this.cloneTarget)
+      document.getElementById('app').removeEventListener('scroll', this.prevent)
       this.cloneTarget = {}
       this.setDrop(e, '', this.itemToPaste)
       t.style.opacity = '1'
@@ -78,6 +85,7 @@ export default {
     setTouchDragStart (e, t, data) {
       this.cloneTarget = this.prepareClone(e, t)
       document.getElementById('content').appendChild(this.cloneTarget)
+      document.getElementById('app').addEventListener('scroll', this.prevent)
       this.transfer = data
       t.style.opacity = '.5'
     },
@@ -116,18 +124,18 @@ export default {
 </script>
 <style lang="stylus" scoped>
 .content
-  height 100%
-  overflow auto
   display flex
   flex-direction column
   flex-basis 500px
-  padding 50px
+  padding 30px
   .drag-item
     cursor pointer
     margin 20px
     padding 20px
     border-radius 30px
     transition all .5s
+    color white
+    font-weight 800
 .over
   transform scale(.9)
 .list-move
