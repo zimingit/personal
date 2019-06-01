@@ -69,8 +69,8 @@ export default {
       res.style.width = t.clientWidth - 40 + 'px'
       res.style.position = 'fixed'
       res.style.opacity = '.7'
-      res.style.top = evt.clientY - evt.clientHeight + 'px'
-      res.style.left = evt.clientX - evt.clientWidth / 2 + 'px'
+      res.style.top = evt.clientY - t.clientHeight + 'px'
+      res.style.left = evt.clientX - t.clientWidth / 2 + 'px'
       res.style.transition = 'all 0s'
       res.style.pointerEvents = 'none'
       return res

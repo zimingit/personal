@@ -1,9 +1,12 @@
 <template>
   <div id="app">
     <app-menu/>
-    <transition name="fade">
+    <transition name="fade" mode="out-in" @enter="showPreload()">
       <router-view/>
     </transition>
+    <div v-if="switcher.show" class="preload">
+      <h1>Вжух..</h1>
+    </div>
   </div>
 </template>
 <script>
@@ -11,11 +14,21 @@ import AppMenu from '@/components/appMenu'
 export default {
   data () {
     return {
+      switcher: {
+        show: false,
+        toggle () {
+          this.show = !this.show
+          setTimeout(() => { this.show = !this.show }, 150)
+        }
+      }
     }
   },
   created () {
   },
   methods: {
+    showPreload () {
+      this.switcher.toggle()
+    }
   },
   components: {
     AppMenu
@@ -35,6 +48,17 @@ h1, h2, h3, h4
 a
   text-decoration none
   color inherit
+.preload
+  position absolute
+  top 0
+  left 0
+  display flex
+  height 100%
+  width 100%
+  h1
+    margin auto
+    font-weight 100
+    font-size 50px
 #app
   -webkit-font-smoothing antialiased
   -moz-osx-font-smoothing grayscale
@@ -44,7 +68,7 @@ a
   height inherit
 .fade-enter-active, .fade-leave-active
   transition-property opacity
-  transition-duration .25s
+  transition-duration .4s
 .fade-enter-active
   transition-delay .25s
 .fade-enter, .fade-leave-active
