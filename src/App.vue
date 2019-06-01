@@ -5,7 +5,8 @@
       <router-view/>
     </transition>
     <div v-if="switcher.show" class="preload">
-      <h1>Вжух..</h1>
+      <!-- <h1>keep calm and waiting</h1> -->
+      <h1>В ж у х</h1>
     </div>
   </div>
 </template>
