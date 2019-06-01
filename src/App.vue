@@ -12,7 +12,7 @@
 </template>
 <script>
 import AppMenu from '@/components/appMenu'
-const preloadersList = ['В ж у х', 'Т р у н ь', 'П и у', 'Т ы щ', 'Б а м', 'К ч а у', 'П а у', 'Ч п о н ь к', 'О п - л я']
+const preloadersList = ['В ж у х', 'Т р у н ь', 'П и у', 'Т ы щ', 'Б а м', 'К ч а у', 'П а у', 'Ч п о н ь к', 'О п - л я', 'К у с ь']
 export default {
   data () {
     return {
@@ -20,7 +20,7 @@ export default {
         show: false,
         toggle () {
           this.show = !this.show
-          setTimeout(() => { this.show = !this.show }, 150)
+          setTimeout(() => { this.show = !this.show }, 250)
         }
       },
       preloader: {
@@ -80,6 +80,7 @@ a
   color #2c3e50
   width inherit
   height inherit
+  overflow-y auto
 .fade-enter-active, .fade-leave-active
   transition-property opacity
   transition-duration .4s

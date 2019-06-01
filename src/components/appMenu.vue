@@ -10,7 +10,7 @@
       <div class="closer">
         <img src="../assets/menu/close.svg" alt="Close">
       </div>
-      <router-link to="/Home"><h1>About</h1></router-link>
+      <router-link to="/About"><h1>About</h1></router-link>
       <router-link to="/Contacts"><h1>Contacts</h1></router-link>
       <router-link to="/Projects"><h1>Projects</h1></router-link>
       <router-link to="/News"><h1>News</h1></router-link>

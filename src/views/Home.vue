@@ -29,8 +29,6 @@
 </template>
 <style lang="stylus" scoped>
 .home
-  height 100%
-  overflow auto
   display flex
   padding 40px 10px
   flex-direction column
