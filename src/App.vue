@@ -51,4 +51,9 @@ a
   transition-delay .25s
 .fade-enter, .fade-leave-active
   opacity 0
+
+@keyframes rotation {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
 </style>
