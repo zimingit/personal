@@ -2,7 +2,7 @@
   <span :style="{transform: `scale(${factor[r - 1]}, 1`}"></span>
 </template>
 <script>
-const factorMartix = [4, 3, 4, 3, 6, 2, 8, 3, 4, 6, 2, 1, 5, 4, 1, 3, 2, 2, 4, 1, 3, 4, 3, 4, 1, 2, 1, 2, 1, .5]
+const factorMartix = [4, 3, 4, 3, 6, 2, 8, 3, 4, 6, 2, 1, 5, 4, 1, 3, 2, 2, 4, 1, 3, 4, 3, 4, 1, 2, 1, 2, 1, 0.5]
 export default {
   name: 'DragDrop',
   props: {

@@ -27,7 +27,7 @@ export default {
   },
   mounted () {
     setTimeout(() => {
-     this.rotate()
+      this.rotate()
     }, 500)
   },
   methods: {
