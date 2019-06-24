@@ -88,10 +88,10 @@ export default {
   border-left 1px solid #e0e0e0
   border-top 1px solid #e0e0e0
   overflow auto
-  height calc(100% - 50px)
+  height 100%
 .content
   padding-top 50px
-  height 100%
+  height calc(100% - 50px)
   overflow auto
   display flex
   flex-direction column
