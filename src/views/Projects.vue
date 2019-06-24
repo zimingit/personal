@@ -23,6 +23,11 @@ const projectsConstList = [
     name: 'Tooltip',
     description: 'Компонент для вывода подсказок.',
     link: '/Projects/Tooltip'
+  },
+  {
+    name: 'g-Chart',
+    description: 'Простая отрисовка диаграммы Гантта.',
+    link: '/Projects/Gchart'
   }
 ]
 export default {

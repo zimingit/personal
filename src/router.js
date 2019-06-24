@@ -6,6 +6,7 @@ import About from './views/About.vue'
 import Projects from './views/Projects.vue'
 import Forbidden from './views/Forbidden.vue'
 import Draggable from './libs/DragDrop.vue'
+import Gchart from './libs/Gchart.vue'
 
 Vue.use(Router)
 
@@ -47,6 +48,11 @@ export default new Router({
       path: '/Projects/Draggable',
       name: 'Draggable',
       component: Draggable
+    },
+    {
+      path: '/Projects/Gchart',
+      name: 'Gchart',
+      component: Gchart
     }
   ]
 })
