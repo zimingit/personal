@@ -32,6 +32,7 @@ export default {
   },
   methods: {
     refreshForm () {
+      window.navigator.vibrate(30)
       this.rows = 0
       this.rotate()
       setTimeout(() => {
