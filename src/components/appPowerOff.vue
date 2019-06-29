@@ -1,7 +1,7 @@
 <template>
   <div class="layout">
       <div class="border">
-        <h3>ACTION COULD NOT</br> BE COMPLETED</h3>
+        <h3>ACTION COULD NOT<br> BE COMPLETED</h3>
         <div>
           <h2>ZIMIN IS <span :style="{'background': color}">ALWAYS</span></h2>
           <h1>IN</h1>

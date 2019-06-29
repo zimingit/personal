@@ -7,7 +7,7 @@
       <img src="../assets/menu/blue.svg" alt="Menu" @click="showMenu('blue')">
     </div>
     <div class="menu" :class="[{'_show': openMenu}]" :style="{'background-color': colorComputed}" @click="openMenu = !openMenu">
-      <div :class="['menu_items_layout', {'__blur': powerOffDialog}]">
+      <div :class="['menu_items_layout', {'__scale': powerOffDialog}]">
         <div class="closer">
           <img src="../assets/menu/close.svg" alt="Close">
         </div>
@@ -17,19 +17,17 @@
         <router-link to="/News"><h1>News</h1></router-link>
       </div>
     </div>
-    <transition name="fade-power">
-      <div v-if="openMenu" class="power_off">
-        <transition name="fade-power">
-          <span v-if="!powerOffDialog" @click="powerOff()">OUT</span>
-          <poff v-else :color="colorComputed" @click.native="powerOff()"></poff>
-        </transition>
-      </div>
-    </transition>
+    <div v-if="openMenu" class="power_off">
+      <transition name="fade-power">
+        <span v-if="!powerOffDialog" @click="powerOff()">OUT</span>
+        <poff v-else :color="colorComputed" @click.native="powerOff()"></poff>
+      </transition>
+    </div>
   </div>
 </template>
 
 <script>
-import appPowerOff from './appPowerOff.vue';
+import appPowerOff from './appPowerOff.vue'
 const colors = {
   red: '#ea4335',
   yellow: '#fbbc05',
@@ -149,18 +147,15 @@ export default {
       transform scale(1, 0)
 
 .menu_items_layout
-  transition all .3s
+  transition all .2s
   will-change transform
-  filter blur(0px)
-  &.__blur
-    filter blur(5px)
-    transform scale(1.5, 1.5)
+  &.__scale
+    transform scale(0, 0)
 
-.fade-power
-  will-change transform
-  transition all .5s
+.fade-power-enter-active, .fade-power-leave-active
+  transition all .2s
 
 .fade-power-enter, .fade-power-leave-to
   opacity 0
-  transform scale(1.7, 1.7)
+  transform scale(1.2, 1.2)
 </style>
