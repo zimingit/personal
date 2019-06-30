@@ -10,5 +10,8 @@ module.exports = {
   pwa: {
     themeColor: '#ffffff',
     msTileColor: '#ffffff'
+  },
+  devServer: {
+    // host: 'localhost'
   }
 }; 
