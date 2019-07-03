@@ -1,44 +1,51 @@
 <template>
   <div class="projects_layout">
-    <div  v-for="(project, i) in projects" :key="project.name" class="project_item">
+    <div  v-for="(project, i) in projects" :key="project.name" class="project_item"
+    :style="getBackground(i)">
       <span class="pseudo top"></span>
       <span class="pseudo bot"></span>
-      <div class="symbol" 
+      <div class="symbol"
            :style="[{'color': colors[i]},
-                    {'box-shadow': `inset 3px 3px 1${volume}px 0px ${colors[i]}`}]">
+                    {'box-shadow': `inset 3px 3px ${volume}px 0px ${colors[i]}`}]">
         <p>{{project.name[0].toUpperCase()}}</p>
         <span>{{project.name[1].toLowerCase()}}</span>
       </div>
       <h1>{{project.name}}</h1>
-      <p>{{project.description}}</p>
-      <router-link :to="project.link"><span class="button_show">Хочу посмотреть</span></router-link>
+      <p class="description">{{project.description}}</p>
+      <router-link :to="project.link">
+        <span class="button_show" :style="{'background': colors[i]}">Хочу посмотреть</span>
+      </router-link>
     </div>
   </div>
 </template>
 <script>
+import _ from 'lodash'
 const projectsConstList = [
   {
     name: 'Draggable',
     description: 'Плагин для работы с перетаскиваемыми элементами.',
-    link: '/Projects/Draggable'
+    link: '/Projects/Draggable',
+    showDescription: false
   },
   {
     name: 'Observer',
     description: 'Плагин для отслеживания изменения размеров блока (Chrome).',
-    link: '/Projects/Observer'
+    link: '/Projects/Observer',
+    showDescription: false
   },
   {
     name: 'Tooltip',
     description: 'Компонент для вывода подсказок.',
-    link: '/Projects/Tooltip'
+    link: '/Projects/Tooltip',
+    showDescription: false
   },
   {
     name: 'Chart',
     description: 'Простая отрисовка диаграммы Гантта.',
-    link: '/Projects/Gchart'
+    link: '/Projects/Gchart',
+    showDescription: false
   }
 ]
-import _ from 'lodash'
 const colors = ['#ea4335', '#fbbc05', '#4285f4', '#34a853', '#00bcd4', '#9c27b0', '#795548']
 export default {
   name: 'Projects',
@@ -46,14 +53,15 @@ export default {
   },
   data () {
     return {
-      projects: projectsConstList,
+      projects: _.shuffle(projectsConstList),
       colors: _.shuffle(colors),
       recorder: '',
-      volume: 10
+      volume: 50
     }
   },
   created () {
-    let vm = this
+    // Анимация тени в зависимости от громкости
+    /* let vm = this
     navigator.mediaDevices.getUserMedia({
       audio: true
     })
@@ -69,9 +77,13 @@ export default {
           this.recorder.stop()
         }, 490)
       }, 500)
-    })
+    }) */
   },
   methods: {
+    getBackground (i) {
+      let c = this.colors[i]
+      return `background: linear-gradient(220deg, ${c + '0b'} 0%, ${c + '0b'} 50%, ${c + '05'} 50%, ${c + '05'} 100%)`
+    }
   },
   components: {
   }
@@ -98,7 +110,11 @@ $borderColor = #616161
     position relative
     display flex
     flex-direction column
+    justify-content space-evenly
     align-items center
+    transition transform .3s
+    &:hover
+      transform scale(1.02, 1.02)
     .symbol
       width 100px
       height 100px
@@ -108,8 +124,6 @@ $borderColor = #616161
       display flex
       justify-content center
       align-items center
-      transition box-shadow .5s
-      will-change box-shadow
       box-shadow inset 3px 3px 10px 0px #34a853
       p
         padding 0
@@ -118,24 +132,45 @@ $borderColor = #616161
         flex-basis 0
         margin-left -50%
         margin-top -40%
+        text-shadow 12px 14px 15px black
       span
         margin-bottom -40%
         margin-right -50%
+        text-shadow 12px 14px 15px black
     h1
-      font-size 40px
+      font-size 45px
       padding 20px
+    .description
+      font-size 18px
     a
       margin 20px
     .button_show
-      background-color #80808014
+      color white
+      font-weight 800
+      box-shadow 0px 2px 0px #cdcaca
       padding 10px 15px
       border-radius 3px
       cursor pointer
       transition all .3s
+      position relative
+      &:after
+        content ''
+        display block
+        position absolute
+        pointer-events none
+        top 0
+        transform translateX(-100%)
+        width 100%
+        height 100%
+        transition transform .3s
       &:hover
-        box-shadow 0px 0px 6px #34a85394
+        &:after
+          background linear-gradient(220deg, transparent 0%, transparent 50%, #ffffff15 50%, #ffffff15 100%)
+          transform translateX(0)
       &:active
-        box-shadow inset 0px 0px 6px #34a85394
+        &:after
+          background linear-gradient(220deg, transparent 0%, transparent 50%, #ffffff15 50%, #ffffff15 100%)
+          transform translateX(100%)
         opacity .8
 
 .pseudo
