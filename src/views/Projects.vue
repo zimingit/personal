@@ -4,11 +4,15 @@
     :style="getBackground(i)">
       <span class="pseudo top"></span>
       <span class="pseudo bot"></span>
-      <div class="symbol"
-           :style="[{'color': colors[i]},
-                    {'box-shadow': `inset 3px 3px ${volume}px 0px ${colors[i]}`}]">
-        <p>{{project.name[0].toUpperCase()}}</p>
-        <span>{{project.name[1].toLowerCase()}}</span>
+      <div class="avatar_wrapper">
+        <div class="symbol"
+            :style="[{'color': colors[i]},
+                     {'box-shadow': `inset 3px 3px ${volume}px 15px ${colors[i]}`}]">
+          <p>{{project.name[0].toUpperCase()}}</p>
+          <span>{{project.name[1].toLowerCase()}}</span>
+        </div>
+        <div class="circle pulse" v-for="ind in 4" :key="ind" :style="[{'animation-delay': `${ind - 1}s`}, {'background': colors[i]}]"></div>
+        <div class="circle"></div>
       </div>
       <h1>{{project.name}}</h1>
       <p class="description">{{project.description}}</p>
@@ -94,16 +98,17 @@ $borderColor = #616161
 .projects_layout
   padding-top 50px
   max-height calc(100% - 50px)
+  height calc(100% - 50px)
   overflow-y auto
   display flex
   flex-wrap wrap
   flex-grow 1
-  justify-content space-around
+  justify-content space-evenly
   .project_item
     padding 20px
     margin 1%
     margin 20px
-    flex-basis 400px
+    flex-basis 350px
     flex-grow 1
     box-shadow 0px 0px 9px #0000001a
     border-radius 5px
@@ -112,16 +117,28 @@ $borderColor = #616161
     flex-direction column
     justify-content space-evenly
     align-items center
-    transition transform .3s
+    will-change transform
+    transition all .2s
     &:hover
-      transform scale(1.02, 1.02)
+      // transform scale(.02, .02)
+      margin 10px
+      .pulse
+        animation pulse 4s infinite cubic-bezier(.36, .11, .89, .32)
+      .circle
+        opacity .8
+    .avatar_wrapper
+      position relative
+      width 100px
+      height 100px
     .symbol
       width 100px
       height 100px
+      position absolute
       border-radius 50%
       font-size 100px
       overflow visible
       display flex
+      z-index 100
       justify-content center
       align-items center
       box-shadow inset 3px 3px 10px 0px #34a853
@@ -132,11 +149,11 @@ $borderColor = #616161
         flex-basis 0
         margin-left -50%
         margin-top -40%
-        text-shadow 12px 14px 15px black
+        text-shadow 7px 12px 15px #1e1e1e
       span
         margin-bottom -40%
         margin-right -50%
-        text-shadow 12px 14px 15px black
+        text-shadow 7px 12px 15px #1e1e1e
     h1
       font-size 45px
       padding 20px
@@ -172,6 +189,14 @@ $borderColor = #616161
           background linear-gradient(220deg, transparent 0%, transparent 50%, #ffffff15 50%, #ffffff15 100%)
           transform translateX(100%)
         opacity .8
+.circle
+  position absolute
+  top 0
+  width 100%
+  height 100%
+  border-radius 50%
+  background white
+  opacity 0
 
 .pseudo
   position absolute
@@ -222,4 +247,15 @@ $borderColor = #616161
       height 10px
       border-bottom 1px solid $borderColor
       border-right 1px solid $borderColor
+
+@keyframes pulse {
+  from {
+    opacity .2
+    transform scale(.7)
+  }
+  to {
+    opacity 0
+    transform scale(2.5)
+  }
+}
 </style>
