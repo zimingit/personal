@@ -5,48 +5,66 @@
     <div class="news_item">
       <span class="news_item_number">01</span>
       <h1 class="news_item_label">MSK VUE.JS MEETUP #2</h1>
-      <p class="news_item_description">
-        Вторая по счету встреча для разработчиков, где будем обсуждать прогрессивный фреймворк Vue.js в приятной компании за едой и напитками.
-        <br/><br/>
-        <strong>Когда? </strong> 15 августа, четверг
-        <br/><br/>
-        <strong>Где? </strong> Москва, ул. Балчуг, 7
-        <br/><br/>
-        <strong>Ты там будешь? </strong> Конечно :)
-        <br/><br/>
-        <strong>Где почитать подробнее? </strong> <a href='https://voximplant.timepad.ru/event/1022185'>*Подготовленная кликаельная ссылка*</a>
-      </p>
+      <div class="news_item_description">
+        <div class="news_item_description_icon">
+        </div>
+        <div class="news_item_description_content">
+          <p>
+          Вторая по счету встреча для разработчиков, где будем обсуждать прогрессивный фреймворк Vue.js в приятной компании за едой и напитками.
+          <br/><br/>
+          <strong>Когда? </strong> 15 августа, четверг
+          <br/><br/>
+          <strong>Где? </strong> Москва, ул. Балчуг, 7
+          <br/><br/>
+          <strong>Ты там будешь? </strong> Конечно :)
+          <br/><br/>
+          <strong>Где почитать подробнее? </strong> <a href='https://voximplant.timepad.ru/event/1022185'>*Подготовленная кликабельная ссылка*</a>
+          </p>
+        </div>
+      </div>
     </div>
 
     <div class="news_item">
       <span class="news_item_number">02</span>
       <h1 class="news_item_label">MSK VUE.JS MEETUP #3</h1>
-      <p class="news_item_description">
-        С каждым днем Vue.js становится популярней,
-        все больше разработчиков и компаний делают
-        ставку на данную технологию — 19 сентября при
-        поддержке компании Voximplant пройдет митап сообщества MSK VUE.JS,
-        посвященный фреймворку. Спикеры поделятся опытом разработки,
-        участники сообщества обсудят перспективы развития Vue.js.
-        <br/><br/>
-        <strong>Когда? </strong> 19 сентября, четверг
-        <br/><br/>
-        <strong>Где? </strong> Москва, ул. Мытная 66
-        <br/><br/>
-        <strong>Ты там будешь? </strong> Многовероятно :)
-        <br/><br/>
-        <strong>Где взять больше информации? </strong> <a href='https://voximplant.timepad.ru/event/98675'>*Подготовленная кликаельная ссылка*</a>
-      </p>
+      <div class="news_item_description">
+        <div class="news_item_description_icon">
+        </div>
+        <div class="news_item_description_content">
+          <p>
+          С каждым днем Vue.js становится популярней,
+          все больше разработчиков и компаний делают
+          ставку на данную технологию — 19 сентября при
+          поддержке компании Voximplant пройдет митап сообщества MSK VUE.JS,
+          посвященный фреймворку. Спикеры поделятся опытом разработки,
+          участники сообщества обсудят перспективы развития Vue.js.
+          <br/><br/>
+          <strong>Когда? </strong> 19 сентября, четверг
+          <br/><br/>
+          <strong>Где? </strong> Москва, ул. Мытная 66
+          <br/><br/>
+          <strong>Ты там будешь? </strong> Многовероятно :)
+          <br/><br/>
+          <strong>Где взять больше информации? </strong> <a href='https://voximplant.timepad.ru/event/98675'>*Подготовленная кликабельная ссылка*</a>
+          </p>
+        </div>
+      </div>
     </div>
 
     <div class="news_item">
       <span class="news_item_number">03</span>
       <h1 class="news_item_label">АКТИВНОСТЬ</h1>
-      <p class="news_item_description">
-        Здесь можно последить за моей активностью :)
-        <br/><br/>
-        #embed #wakatime
-      </p>
+      <div class="news_item_description">
+        <div class="news_item_description_icon">
+        </div>
+        <div class="news_item_description_content">
+          <p>
+          Здесь можно последить за моей активностью :)
+          <br/><br/>
+          #embed #wakatime
+          </p>
+        </div>
+      </div>
       <figure>
         <embed src="https://wakatime.com/share/@cbea2116-1b02-482a-a5a3-a74fb1dcb77e/cddfcabb-5ba9-4acc-9579-43c9097c8db4.svg"/>
       </figure>
@@ -89,6 +107,10 @@ figure
   margin 30px
   box-shadow 0px 0px 20px #e0e0e0
   padding 30px
+  &:hover
+    .news_item_description_icon
+      width 100%
+      border-radius 5px
 
 .news_item_number
   position absolute
@@ -109,9 +131,23 @@ figure
   width 100%
   margin 100px 0 30px 0
   font-size 25px
+  display flex
+  flex-direction column
+  align-items center
   a
     &:hover
       border-bottom 3px dotted grey
+  &_icon
+    width 300px
+    height 300px
+    border-radius 50%
+    flex-shrink 0
+    background-position center center
+    background-size 150%
+    background-repeat no-repeat
+    transition all .3s
+    &:hover
+      background-size 100%
 
 @media (orientation: portrait)
   .news_item_number
@@ -122,4 +158,32 @@ figure
     text-align center
     letter-spacing 4px
     left auto
+
+// Хардкоды фоновых картинок :(
+.news_item
+  &:nth-child(2)
+    .news_item_description_icon
+      background-image url('../assets/news/voximplant.jpg')
+      &:hover
+        background-image url('../assets/news/voximplant_meetup_1.jpg')
+        background-position center 80%
+  &:nth-child(3)
+    &:hover
+      .news_item_description_icon
+        background-position center 20%
+    .news_item_description_icon
+      background-image url('../assets/news/pavel.jpg')
+      &:hover
+        background-image url('../assets/news/pavel_face.jpg')
+        background-position center 20%
+  &:nth-child(4)
+    &:hover
+      .news_item_description_icon
+        background-position 40% 60%
+    .news_item_description_icon
+      background-image url('../assets/news/alex_2.jpg')
+      background-position 40% 50%
+      &:hover
+        background-image url('../assets/news/alex.jpg')
+        background-position 40% 60%
 </style>
