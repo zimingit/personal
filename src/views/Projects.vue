@@ -48,6 +48,12 @@ const projectsConstList = [
     description: 'Простая отрисовка диаграммы Гантта.',
     link: '/Projects/Gchart',
     showDescription: false
+  },
+  {
+    name: 'Noticsta',
+    description: 'Простой блокнот для заметок.',
+    link: '/Projects/Noticsta',
+    showDescription: false
   }
 ]
 const colors = ['#ea4335', '#fbbc05', '#4285f4', '#34a853', '#00bcd4', '#9c27b0', '#795548']

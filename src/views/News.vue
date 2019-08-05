@@ -86,7 +86,7 @@
       </figure>
     </div>
     <p>{{news}}</p>
-    <button class="add_news" @click="showCreateDialog()"> Создать </button>
+    <!-- <button class="add_news" @click="showCreateDialog()"> Создать </button> -->
   </div>
 </template>
 <script>

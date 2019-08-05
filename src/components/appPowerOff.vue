@@ -13,17 +13,7 @@
 <script>
 export default {
   name: 'appPowerOff',
-  props: ['color'],
-  data () {
-    return {
-    }
-  },
-  created () {
-  },
-  methods: {
-  },
-  computed: {
-  }
+  props: ['color']
 }
 </script>
 <style lang="stylus" scoped>
