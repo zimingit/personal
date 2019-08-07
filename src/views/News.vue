@@ -120,10 +120,9 @@ export default {
       this.createNews = false
     },
     addNews () {
-     const createdAt = new Date()
-     this.$db.collection('news').add(this.newsData)
-     this.hideCreateDialog()
-   }
+      this.$db.collection('news').add(this.newsData)
+      this.hideCreateDialog()
+    }
   }
 }
 </script>
