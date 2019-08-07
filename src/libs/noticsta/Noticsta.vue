@@ -1,17 +1,12 @@
 <template>
 <div>
   <div class="top">
-    <p>Функционал этой страницы очень сырой :)</p>
-    <label v-if="needLogin" >На чье имя записать?
-      <input v-model="user">
-      <button @click.prevent="setUser()">Поехали</button>
-    </label>
     <h1> Noticsta {{user}}</h1>
-    <button class="create" @click.prevent="createNote()">Создать</button>
+    <button class="create" @click.prevent="create()">Создать</button>
   </div>
   <div class="notes">
-    <div class="note" v-for="(note, i) in notes" :key="note.name + i">
-      <p>{{note.name}}</p>
+    <div class="note" v-for="(note, i) in notes" :key="note.name + i" @contextmenu.prevent="remove(note)">
+      <input v-model.lazy="note.name" @change="update(note)"/>
       <p>{{note.description}}</p>
       <p>{{note.tags.join(', ')}}</p>
     </div>
@@ -26,7 +21,6 @@ export default {
   data () {
     return {
       user: this.userName || '',
-      needLogin: !this.userName,
       notes: [],
       newNote: {
         date: new Date(),
@@ -43,34 +37,34 @@ export default {
       notes: this.$db.collection('notes').where('user', '==', this.user).orderBy('id')
     }
   },
-  mounted () {
-    if (localStorage.user) {
-      this.user = localStorage.user
-      if (!this.userName) {
-        this.setUser()
-      }
+  created () {
+    // Если пришли с user'ом и в localStorage сохранен user и они отличаются, то перезаписываем ls
+    if (this.user && localStorage.user && this.user !== localStorage.user) {
+      localStorage.user = this.user
     }
+    setTimeout(() => {
+      console.log(this.notes)
+    }, 5000)
   },
   methods: {
-    setUser () {
-      this.$router.push(`/Projects/Noticsta/${this.user}`)
-      this.$destroy()
-    },
-    createNote () {
+    create () {
       this.newNote.user = this.user
       this.newNote.id = this.notes.length
       this.newNote.name = (this.notes.length + 1) + ' запись в блокнот'
       this.$db.collection('notes').add(this.newNote)
-    }
-  },
-  watch: {
-    user (newName) {
-      localStorage.user = newName
     },
-    userName (newUserName) {
-      if (newUserName === undefined) return
-      this.needLogin = false
-      localStorage.user = newUserName
+    remove (note) {
+      this.$db.collection('notes')
+        .doc(note.id)
+        .delete()
+    },
+    update (note) {
+      this.$db.collection('notes')
+        .doc(note.id)
+        .set(note)
+        .then(() => {
+          console.log('note updated!')
+        })
     }
   }
 }

@@ -7,7 +7,8 @@ import Projects from './views/Projects.vue'
 import Forbidden from './views/Forbidden.vue'
 import Draggable from './libs/DragDrop.vue'
 import Gchart from './libs/Gchart.vue'
-import Noticsta from './libs/Noticsta.vue'
+import Noticsta from './libs/noticsta/Noticsta.vue'
+import NoticstaCreate from './libs/noticsta/NoticstaCreate.vue'
 
 Vue.use(Router)
 
@@ -63,8 +64,8 @@ export default new Router({
     },
     {
       path: '/Projects/Noticsta',
-      name: 'Noticsta',
-      component: Noticsta
+      name: 'NoticstaCreate',
+      component: NoticstaCreate
     }
   ]
 })
