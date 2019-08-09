@@ -1,31 +1,120 @@
 <template>
-<div class="notesy_logo">
-    notesy
+<div class="notesy_logo" :class="size">
+    <span class="logo v_line" :class="size" :style="linesStyleComputed"></span>
+    <span class="logo h_line" :class="size" :style="linesStyleComputed"></span>
+    <span class="logo d_line" :class="size" :style="linesStyleComputed"></span>
+    <p class="label" :class="size" :style="labelStyleComputed">{{label}}</p>
 </div>
 </template>
 <script>
 
 export default {
   name: 'NotesyLogo',
+  props: {
+    // small, medium, large, extra-large
+    size: {
+      type: String,
+      default: 'medium'
+    },
+    label: {
+      type: String,
+      default: ''
+    },
+    backgroundColor: {
+      type: String,
+      default: 'white'
+    },
+    labelColor: {
+      type: String,
+      default: 'black'
+    },
+    animation: {
+      type: String,
+      default: ''
+    }
+  },
   data () {
     return {
     }
   },
   methods: {
+  },
+  computed: {
+    linesStyleComputed () {
+      return [ { 'background': this.backgroundColor } ]
+    },
+    labelStyleComputed () {
+      return [ { 'color': this.labelColor } ]
+    }
   }
 }
 </script>
 <style lang="stylus" scoped>
 .notesy_logo
   display flex
-  width 200px
-  height 200px
-  border-radius 50%
   justify-content center
   align-items center
-  background white
-  font-size 30px
-  color black
-  font-weight 1000
-  margin 30px
+  position relative
+  border-radius 50%
+  pointer-events none
+  &.small
+    width 50px
+    height 50px
+  &.medium
+    width 100px
+    height 100px
+  &.large
+    width 150px
+    height 150px
+  &.extra-large
+    width 200px
+    height 200px
+
+.label
+  z-index 1
+  font-weight bold
+  pointer-events none
+  &::selection
+    background transparent
+  &.small
+    font-size 13px
+  &.medium
+    font-size 25px
+  &.large
+    font-size 40px
+  &.extra-large
+    font-size 50px
+
+.logo
+  width 65px
+  height 100px
+  background red
+  display block
+  position absolute
+  border-radius 10px
+  &.v_line
+    transform rotate(-30deg)
+  &.d_line
+    transform rotate(30deg)
+  &.h_line
+    transform rotate(90deg)
+
+// Модификаторы размера
+.logo
+  &.small
+    width 33px
+    height 50px
+    border-radius 5px
+  &.medium
+    width 65px
+    height 100px
+    border-radius 10px
+  &.large
+    width 99px
+    height 150px
+    border-radius 15px
+  &.extra-large
+    width 130px
+    height 200px
+    border-radius 20px
 </style>

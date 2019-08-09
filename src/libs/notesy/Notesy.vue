@@ -2,7 +2,14 @@
 <div>
   <div class="top">
     <h1> Notesy {{user}}</h1>
-    <button class="create" @click.prevent="create()">Создать</button>
+    <div class="create" @click="create()">
+    <NotesyLogo
+      size="medium"
+      label="Add"
+      backgroundColor="#80CBC4"
+      labelColor="white"
+      />
+    </div>
   </div>
   <div class="notes">
     <div class="note" v-for="(note, i) in notes" :key="note.name + i" @contextmenu.prevent="remove(note)">
@@ -14,7 +21,7 @@
 </div>
 </template>
 <script>
-
+import NotesyLogo from './NotesyLogo'
 export default {
   name: 'Notesy',
   props: ['userName'],
@@ -36,6 +43,9 @@ export default {
     return {
       notes: this.$db.collection('notes').where('user', '==', this.user).orderBy('id')
     }
+  },
+  components: {
+    NotesyLogo
   },
   created () {
     // Если пришли с user'ом и в localStorage сохранен user и они отличаются, то перезаписываем ls
