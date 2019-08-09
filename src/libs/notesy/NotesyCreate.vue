@@ -1,28 +1,31 @@
 <template>
-<div class="noticsta_create">
-  <div class="noticsta_create_wrapper">
-    <label>На чье имя записать?
-      <input placeholder="alexeyzimin" v-model="user">
-    </label>
+<div class="notesy_create">
+  <div class="notesy_create_wrapper">
+    <NotesyLogo/>
+    <label for="name">Укажи секретное слово</label>
+    <input id="name" placeholder="alexeyzimin" v-model="user">
     <span v-if="error">Нужно больше символов :)</span>
     <span class="button_show" @click.prevent="setUser()">Начать</span>
   </div>
 </div>
 </template>
 <script>
-
+import NotesyLogo from './NotesyLogo'
 export default {
-  name: 'NoticstaCreate',
+  name: 'NotesyCreate',
   data () {
     return {
       user: '',
       error: false
     }
   },
+  components: {
+    NotesyLogo
+  },
   methods: {
     setUser () {
       if (this.user.length > 3) {
-        this.$router.push(`/Projects/Noticsta/${this.user}`)
+        this.$router.push(`/Projects/Notesy/${this.user}`)
       } else {
         this.error = true
       }
@@ -31,27 +34,37 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
-.noticsta_create
+// primary color #7fb8af
+.notesy_create
   display flex
   justify-content center
-.noticsta_create_wrapper
-  max-width 300px
+  color white
+.notesy_create_wrapper
+  max-width 700px
+  width 700px
+  max-width 100vw
+  min-height 100vh
   display flex
   flex-direction column
   align-items center
+  justify-content center
+  background #7fb8af
   label
-    font-size 26px
+    font-size 31px
   input
-    font-size 24px
+    font-size 31px
     text-align center
+    margin 30px
+    max-width 90vw
 
 .button_show
-  margin-top 30px
+  margin 30px
   width 50%
-  color white
+  color black
   font-weight 800
+  font-size 26px
   box-shadow 0px 2px 0px #cdcaca
-  background #ab47bc
+  background white
   padding 10px 15px
   border-radius 3px
   cursor pointer

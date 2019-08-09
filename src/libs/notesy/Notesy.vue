@@ -1,7 +1,7 @@
 <template>
 <div>
   <div class="top">
-    <h1> Noticsta {{user}}</h1>
+    <h1> Notesy {{user}}</h1>
     <button class="create" @click.prevent="create()">Создать</button>
   </div>
   <div class="notes">
@@ -16,7 +16,7 @@
 <script>
 
 export default {
-  name: 'Noticsta',
+  name: 'Notesy',
   props: ['userName'],
   data () {
     return {
