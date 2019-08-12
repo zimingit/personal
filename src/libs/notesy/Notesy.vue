@@ -2,26 +2,197 @@
 <div>
   <div class="top">
     <h1> Notesy {{user}}</h1>
-    <div class="create" @click="create()">
+    <div class="create" @click="showEditor = !showEditor">
     <NotesyLogo
       size="medium"
-      label="Add"
+      label="Edit"
       backgroundColor="#80CBC4"
       labelColor="white"
       />
     </div>
   </div>
-  <div class="notes">
+  <transition name="fade-scale-up">
+  <div class="notes" v-if="!showEditor">
     <div class="note" v-for="(note, i) in notes" :key="note.name + i" @contextmenu.prevent="remove(note)">
       <input v-model.lazy="note.name" @change="update(note)"/>
       <p>{{note.description}}</p>
       <p>{{note.tags.join(', ')}}</p>
     </div>
   </div>
+  </transition>
+  <transition name="fade-scale-down" tag="div" class="editor_wrapper">
+  <div class="editor editor_wrapper" v-if="showEditor">
+    <editor-menu-bar :editor="editor" v-slot="{ commands, isActive }">
+      <div class="menubar">
+
+        <button
+          class="menubar__button"
+          :class="{ 'is-active': isActive.bold() }"
+          @click="commands.bold"
+        >
+        bold
+          <icon name="bold" />
+        </button>
+
+        <button
+          class="menubar__button"
+          :class="{ 'is-active': isActive.italic() }"
+          @click="commands.italic"
+        >
+        italic
+          <icon name="italic" />
+        </button>
+
+        <button
+          class="menubar__button"
+          :class="{ 'is-active': isActive.strike() }"
+          @click="commands.strike"
+        >
+        strike
+          <icon name="strike" />
+        </button>
+
+        <button
+          class="menubar__button"
+          :class="{ 'is-active': isActive.underline() }"
+          @click="commands.underline"
+        >
+        underline
+          <icon name="underline" />
+        </button>
+
+        <button
+          class="menubar__button"
+          :class="{ 'is-active': isActive.code() }"
+          @click="commands.code"
+        >
+        code
+          <icon name="code" />
+        </button>
+
+        <button
+          class="menubar__button"
+          :class="{ 'is-active': isActive.paragraph() }"
+          @click="commands.paragraph"
+        >
+        paragraph
+          <icon name="paragraph" />
+        </button>
+
+        <button
+          class="menubar__button"
+          :class="{ 'is-active': isActive.heading({ level: 1 }) }"
+          @click="commands.heading({ level: 1 })"
+        >
+          H1
+        </button>
+
+        <button
+          class="menubar__button"
+          :class="{ 'is-active': isActive.heading({ level: 2 }) }"
+          @click="commands.heading({ level: 2 })"
+        >
+          H2
+        </button>
+
+        <button
+          class="menubar__button"
+          :class="{ 'is-active': isActive.heading({ level: 3 }) }"
+          @click="commands.heading({ level: 3 })"
+        >
+          H3
+        </button>
+
+        <button
+          class="menubar__button"
+          :class="{ 'is-active': isActive.bullet_list() }"
+          @click="commands.bullet_list"
+        >
+        bullet list
+          <icon name="ul" />
+        </button>
+
+        <button
+          class="menubar__button"
+          :class="{ 'is-active': isActive.ordered_list() }"
+          @click="commands.ordered_list"
+        >
+        ordered list
+          <icon name="ol" />
+        </button>
+
+        <button
+          class="menubar__button"
+          :class="{ 'is-active': isActive.blockquote() }"
+          @click="commands.blockquote"
+        >
+        blockquote
+          <icon name="quote" />
+        </button>
+
+        <button
+          class="menubar__button"
+          :class="{ 'is-active': isActive.code_block() }"
+          @click="commands.code_block"
+        >
+        code block
+          <icon name="code" />
+        </button>
+
+        <button
+          class="menubar__button"
+          @click="commands.horizontal_rule"
+        >
+        hr
+          <icon name="hr" />
+        </button>
+
+        <button
+          class="menubar__button"
+          @click="commands.undo"
+        >
+        undo
+          <icon name="undo" />
+        </button>
+
+        <button
+          class="menubar__button"
+          @click="commands.redo"
+        >
+        redo
+          <icon name="redo" />
+        </button>
+
+      </div>
+    </editor-menu-bar>
+    <editor-content class="editor__content" :editor="editor" />
+  </div>
+  </transition>
 </div>
 </template>
 <script>
 import NotesyLogo from './NotesyLogo'
+import Icon from '../Icon'
+import { Editor, EditorContent, EditorMenuBar } from 'tiptap'
+import {
+  Blockquote,
+  CodeBlock,
+  HardBreak,
+  Heading,
+  HorizontalRule,
+  OrderedList,
+  BulletList,
+  ListItem,
+  TodoItem,
+  TodoList,
+  Bold,
+  Code,
+  Italic,
+  Link,
+  Strike,
+  Underline,
+  History,
+} from 'tiptap-extensions'
 export default {
   name: 'Notesy',
   props: ['userName'],
@@ -36,7 +207,51 @@ export default {
         user: '',
         id: 0,
         tags: ['тег1', 'тег2']
-      }
+      },
+      showEditor: false,
+      editor: new Editor({
+        extensions: [
+          new Blockquote(),
+          new BulletList(),
+          new CodeBlock(),
+          new HardBreak(),
+          new Heading({ levels: [1, 2, 3] }),
+          new HorizontalRule(),
+          new ListItem(),
+          new OrderedList(),
+          new TodoItem(),
+          new TodoList(),
+          new Link(),
+          new Bold(),
+          new Code(),
+          new Italic(),
+          new Strike(),
+          new Underline(),
+          new History(),
+        ],
+        content: `
+          <h2>
+            Hi there,
+          </h2>
+          <p>
+            this is a very <em>basic</em> example of tiptap.
+          </p>
+          <pre><code>body { display: none; }</code></pre>
+          <ul>
+            <li>
+              A regular list
+            </li>
+            <li>
+              With regular items
+            </li>
+          </ul>
+          <blockquote>
+            It's amazing 👏
+            <br />
+            – mom
+          </blockquote>
+        `,
+      })
     }
   },
   firestore () {
@@ -45,7 +260,10 @@ export default {
     }
   },
   components: {
-    NotesyLogo
+    NotesyLogo,
+    EditorContent,
+    EditorMenuBar,
+    Icon
   },
   created () {
     // Если пришли с user'ом и в localStorage сохранен user и они отличаются, то перезаписываем ls
@@ -76,6 +294,9 @@ export default {
           console.log('note updated!')
         })
     }
+  },
+  beforeDestroy() {
+    this.editor.destroy()
   }
 }
 </script>
@@ -100,4 +321,25 @@ export default {
   position fixed
   bottom 10px
   right 10px
+  z-index 900
+
+.editor_wrapper
+  position fixed
+  top 0
+  left 0
+  width 100vw
+  height 100vh
+  .menubar
+    padding-top 50px
+    button
+      background #80CBC4
+      border none
+      margin 5px
+      border none
+      outline none
+      font-weight bold
+      color white
+      text-align center
+      padding 5px
+      border-radius 4px 
 </style>

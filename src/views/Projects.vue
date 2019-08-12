@@ -54,7 +54,7 @@ const projectsConstList = [
     description: 'Простой блокнот для заметок.',
     link: '/Projects/Notesy',
     showDescription: false,
-    personalColor: '#7fb8af'
+    personalColor: '#80CBC4'
   }
 ]
 const colors = ['#ea4335', '#fbbc05', '#4285f4', '#34a853', '#00bcd4', '#9c27b0', '#795548']
