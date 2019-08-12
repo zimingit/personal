@@ -2,10 +2,10 @@
 <div>
   <div class="top">
     <h1> Notesy {{user}}</h1>
-    <div class="create" @click="showEditor = !showEditor">
+    <div class="create" @click="closeEditor()">
     <NotesyLogo
       size="medium"
-      label="Edit"
+      :label="!showEditor? 'Edit': 'Save'"
       backgroundColor="#80CBC4"
       labelColor="white"
       />
@@ -14,9 +14,17 @@
   <transition name="fade-scale-up">
   <div class="notes" v-if="!showEditor">
     <div class="note" v-for="(note, i) in notes" :key="note.name + i" @contextmenu.prevent="remove(note)">
-      <input v-model.lazy="note.name" @change="update(note)"/>
-      <p>{{note.description}}</p>
+      <p>{{note.name}}</p>
+      <div v-html="note.description"></div>
       <p>{{note.tags.join(', ')}}</p>
+      <div class="note_edit" @click="editNote(note)">
+        <NotesyLogo
+          size="small"
+          label="Edit"
+          backgroundColor="#80CBC4"
+          labelColor="white"
+          />
+      </div>
     </div>
   </div>
   </transition>
@@ -165,7 +173,14 @@
 
       </div>
     </editor-menu-bar>
-    <editor-content class="editor__content" :editor="editor" />
+    <div>
+      <p>Название:<span><input v-model="noteToEdit.name"></span></p>
+      <p>Теги:<span><input v-model="noteToEdit.tags"></span></p>
+      <p>Описание:<span>
+        <editor-content class="editor__content" :editor="editor" />
+      </span>
+      </p>
+    </div>
   </div>
   </transition>
 </div>
@@ -191,7 +206,7 @@ import {
   Link,
   Strike,
   Underline,
-  History,
+  History
 } from 'tiptap-extensions'
 export default {
   name: 'Notesy',
@@ -208,6 +223,7 @@ export default {
         id: 0,
         tags: ['тег1', 'тег2']
       },
+      noteToEdit: {},
       showEditor: false,
       editor: new Editor({
         extensions: [
@@ -227,7 +243,7 @@ export default {
           new Italic(),
           new Strike(),
           new Underline(),
-          new History(),
+          new History()
         ],
         content: `
           <h2>
@@ -250,7 +266,7 @@ export default {
             <br />
             – mom
           </blockquote>
-        `,
+        `
       })
     }
   },
@@ -275,6 +291,11 @@ export default {
     }, 5000)
   },
   methods: {
+    editNote (note) {
+      this.editor.setContent(note.description)
+      this.noteToEdit = note
+      this.showEditor = true
+    },
     create () {
       this.newNote.user = this.user
       this.newNote.id = this.notes.length
@@ -286,6 +307,14 @@ export default {
         .doc(note.id)
         .delete()
     },
+    closeEditor () {
+      this.showEditor = false
+      if (this.noteToEdit !== {}) {
+        this.noteToEdit.description = this.editor.getHTML()
+        this.update(this.notes.find(note => note.id === this.noteToEdit.id))
+        this.noteToEdit = {}
+      }
+    },
     update (note) {
       this.$db.collection('notes')
         .doc(note.id)
@@ -295,7 +324,7 @@ export default {
         })
     }
   },
-  beforeDestroy() {
+  beforeDestroy () {
     this.editor.destroy()
   }
 }
@@ -306,6 +335,7 @@ export default {
   flex-wrap wrap
   justify-content flex-start
 .note
+  position relative
   display flex
   flex-direction column
   min-width 32%
@@ -317,6 +347,10 @@ export default {
     min-width 95%
     margin-left 2.5%
     margin-right 2.5%
+  .note_edit
+    position absolute
+    bottom 5px
+    right 5px
 .create
   position fixed
   bottom 10px
@@ -341,5 +375,5 @@ export default {
       color white
       text-align center
       padding 5px
-      border-radius 4px 
+      border-radius 4px
 </style>
