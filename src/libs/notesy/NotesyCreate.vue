@@ -2,10 +2,10 @@
 <div class="notesy_create">
   <div class="notesy_create_wrapper">
     <NotesyLogo size="extra-large" label="notesy"/>
-    <p for="name">Укажи секретное слово</p>
+    <p for="name">Set a secret word </br>🡇</p>
     <input id="name" placeholder="alexeyzimin" v-model="user" @keyup.enter="setUser()">
     <span v-if="error">Нужно больше символов :)</span>
-    <span class="button_show" @click.prevent="setUser()">Начать</span>
+    <span class="button_show" @click.prevent="setUser()">Go</span>
   </div>
 </div>
 </template>
@@ -52,12 +52,17 @@ export default {
   p
     font-size 31px
     padding 0
-    margin 30px
+    margin 20px
+    margin-top 60px
   input
     font-size 31px
     text-align center
-    margin 20px
-    max-width 90vw
+    margin 30px
+    padding 8px 15px
+    max-width 80vw
+    outline none
+    border-radius 3px
+    border none
 
 .button_show
   margin 30px
@@ -73,6 +78,9 @@ export default {
   transition all .3s
   overflow hidden
   position relative
+  @media (orientation: portrait)
+    width 80vw
+    margin 30px
   &:after
     content ''
     display block

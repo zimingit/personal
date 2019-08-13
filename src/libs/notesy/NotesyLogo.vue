@@ -56,7 +56,6 @@ export default {
   align-items center
   position relative
   border-radius 50%
-  pointer-events none
   &.small
     width 50px
     height 50px
@@ -92,6 +91,7 @@ export default {
   display block
   position absolute
   border-radius 10px
+  pointer-events none
   &.v_line
     transform rotate(-30deg)
   &.d_line
@@ -104,7 +104,7 @@ export default {
   &.small
     width 33px
     height 50px
-    border-radius 5px
+    border-radius 6px
   &.medium
     width 65px
     height 100px

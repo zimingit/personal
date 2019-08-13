@@ -2,12 +2,22 @@
 <div>
   <div class="top">
     <h1> Notesy {{user}}</h1>
-    <div class="create" @click="toggleEditor()">
+    <div class="create">
     <NotesyLogo
-      size="medium"
+      @click.native="toggleEditor()"
+      :size="sizeEditorComputed"
       :label="labelEditorComputed"
       backgroundColor="#80CBC4"
       labelColor="white"
+      class="tool_item"
+      />
+    <NotesyLogo v-if="showEditor"
+      @click.native="closeEditorWithoutSave()"
+      size="small"
+      label="close"
+      backgroundColor="#80CBC4"
+      labelColor="white"
+      class="tool_item"
       />
     </div>
   </div>
@@ -332,6 +342,9 @@ export default {
         this.noteToEdit = {}
       }
     },
+    closeEditorWithoutSave () {
+      this.showEditor = false
+    },
     getDateFromTimestamp (date) {
       let joiner = []
       date = date.toDate()
@@ -348,6 +361,13 @@ export default {
         text = 'Save'
       }
       return text
+    },
+    sizeEditorComputed () {
+      let size = 'medium'
+      if (this.showEditor) {
+        size = 'small'
+      }
+      return size
     },
     noteByDatesComputed () {
       let notesByDate = {}
@@ -415,19 +435,31 @@ export default {
     min-width 95%
     margin-left 2.5%
     margin-right 2.5%
+  &:hover
+    .toolbar_container
+      opacity 1
+      transform scale(1)
   .toolbar_container
     position absolute
     display flex
     flex-direction column-reverse
     bottom 5px
     right 5px
+    opacity 0
+    transform scale(0)
+    transform-origin right
+    transition opacity .5s, transform .3s
     .tool
       margin 5px
 .create
+  display flex
+  flex-direction row-reverse
   position fixed
-  bottom 10px
-  right 10px
+  bottom 5px
+  right 5px
   z-index 900
+  .tool_item
+    margin 5px
 
 .editor_wrapper
   position fixed
