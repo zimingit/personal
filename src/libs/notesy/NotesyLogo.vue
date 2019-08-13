@@ -58,16 +58,16 @@ export default {
   border-radius 50%
   &.small
     width 50px
-    height 50px
+    height 56px
   &.medium
     width 100px
-    height 100px
+    height 113px
   &.large
     width 150px
-    height 150px
+    height 170px
   &.extra-large
     width 200px
-    height 200px
+    height 225px
 
 .label
   z-index 1
