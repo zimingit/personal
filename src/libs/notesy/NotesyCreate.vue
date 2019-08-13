@@ -34,7 +34,7 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
-// primary color #7fb8af or #80CBC4
+// primary color #7fb8af or #80CBC4 or #00bcd4
 .notesy_create
   display flex
   justify-content center

@@ -2,28 +2,38 @@
 <div>
   <div class="top">
     <h1> Notesy {{user}}</h1>
-    <div class="create" @click="closeEditor()">
+    <div class="create" @click="toggleEditor()">
     <NotesyLogo
       size="medium"
-      :label="!showEditor? 'Edit': 'Save'"
+      :label="labelEditorComputed"
       backgroundColor="#80CBC4"
       labelColor="white"
       />
     </div>
   </div>
   <transition name="fade-scale-up">
-  <div class="notes" v-if="!showEditor">
-    <div class="note" v-for="(note, i) in notes" :key="note.name + i" @contextmenu.prevent="remove(note)">
-      <p>{{note.name}}</p>
-      <div v-html="note.description"></div>
-      <p>{{note.tags.join(', ')}}</p>
-      <div class="note_edit" @click="editNote(note)">
-        <NotesyLogo
-          size="small"
-          label="Edit"
-          backgroundColor="#80CBC4"
-          labelColor="white"
-          />
+  <div class="dates_container" v-if="!showEditor">
+    <div class="date" v-for="day in noteByDatesComputed" :key="day.date.seconds">
+      <div class="date_label_container">
+        <h3>{{day.date}}</h3>
+      </div>
+      <div class="notes_container">
+        <div class="note" v-for="(note, i) in day.notes" :key="note.name + i + day.date.seconds">
+          <p>{{note.name}}</p>
+          <div v-html="note.description"></div>
+          <p>{{note.tags.join(', ')}}</p>
+          <div class="toolbar_container">
+            <div v-if="!sure[note.id]" class="tool note_remove" @click="toggleSure(note)">
+              <NotesyLogo size="small" label="Delete" backgroundColor="#80CBC4" labelColor="white"/>
+            </div>
+            <div v-else class="tool note_remove" @click="remove(note)">
+              <NotesyLogo size="small" label="Sure?" backgroundColor="#ff5722" labelColor="white"/>
+            </div>
+            <div class="tool note_edit" @click="editNote(note)">
+              <NotesyLogo size="small" label="Edit" backgroundColor="#80CBC4" labelColor="white"/>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -215,15 +225,7 @@ export default {
     return {
       user: this.userName || '',
       notes: [],
-      newNote: {
-        date: new Date(),
-        description: 'Тестовая запись в блокноте',
-        name: 'Первая запись в блокнот',
-        user: '',
-        id: 0,
-        tags: ['тег1', 'тег2']
-      },
-      noteToEdit: {},
+      sure: {},
       showEditor: false,
       editor: new Editor({
         extensions: [
@@ -245,34 +247,13 @@ export default {
           new Underline(),
           new History()
         ],
-        content: `
-          <h2>
-            Hi there,
-          </h2>
-          <p>
-            this is a very <em>basic</em> example of tiptap.
-          </p>
-          <pre><code>body { display: none; }</code></pre>
-          <ul>
-            <li>
-              A regular list
-            </li>
-            <li>
-              With regular items
-            </li>
-          </ul>
-          <blockquote>
-            It's amazing 👏
-            <br />
-            – mom
-          </blockquote>
-        `
+        content: ''
       })
     }
   },
   firestore () {
     return {
-      notes: this.$db.collection('notes').where('user', '==', this.user).orderBy('id')
+      notes: this.$db.collection('notes').where('user', '==', this.user).orderBy('date')
     }
   },
   components: {
@@ -296,24 +277,13 @@ export default {
       this.noteToEdit = note
       this.showEditor = true
     },
-    create () {
-      this.newNote.user = this.user
-      this.newNote.id = this.notes.length
-      this.newNote.name = (this.notes.length + 1) + ' запись в блокнот'
-      this.$db.collection('notes').add(this.newNote)
-    },
-    remove (note) {
+    create (noteToSave) {
+      noteToSave.user = this.user
       this.$db.collection('notes')
-        .doc(note.id)
-        .delete()
-    },
-    closeEditor () {
-      this.showEditor = false
-      if (this.noteToEdit !== {}) {
-        this.noteToEdit.description = this.editor.getHTML()
-        this.update(this.notes.find(note => note.id === this.noteToEdit.id))
-        this.noteToEdit = {}
-      }
+        .add(noteToSave)
+        .then(() => {
+          console.log('note created!')
+        })
     },
     update (note) {
       this.$db.collection('notes')
@@ -322,6 +292,84 @@ export default {
         .then(() => {
           console.log('note updated!')
         })
+    },
+    remove (note) {
+      this.$db.collection('notes')
+        .doc(note.id)
+        .delete()
+    },
+    toggleSure (note) {
+      this.$set(this.sure, note.id, true)
+      setTimeout(_ => { this.sure[note.id] = false }, 2000)
+    },
+    toggleEditor () {
+      if (this.showEditor) {
+        this.closeEditor()
+      } else {
+        this.showEditorDialog()
+      }
+    },
+    showEditorDialog () {
+      let note = {
+        date: new Date(),
+        description: 'Описание задачи',
+        name: 'Название',
+        user: '',
+        tags: ['tags']
+      }
+      this.editNote(note)
+    },
+    closeEditor () {
+      this.showEditor = false
+      if (this.noteToEdit !== {}) {
+        this.noteToEdit.description = this.editor.getHTML()
+        const currentNote = this.notes.find(note => note.id === this.noteToEdit.id)
+        if (currentNote) {
+          this.update(currentNote)
+        } else {
+          this.create(this.noteToEdit)
+        }
+        this.noteToEdit = {}
+      }
+    },
+    getDateFromTimestamp (date) {
+      let joiner = []
+      date = date.toDate()
+      joiner.push(date.getDate())
+      joiner.push(date.getMonth())
+      joiner.push(date.getFullYear())
+      return joiner.join('.')
+    }
+  },
+  computed: {
+    labelEditorComputed () {
+      let text = 'Create'
+      if (this.showEditor) {
+        text = 'Save'
+      }
+      return text
+    },
+    noteByDatesComputed () {
+      let notesByDate = {}
+      const getDate = (date) => this.getDateFromTimestamp(date)
+      this.notes.forEach(note => {
+        if (!notesByDate[getDate(note.date)]) {
+          notesByDate[getDate(note.date)] = {
+            date: getDate(note.date),
+            notes: this.notes.filter(n => getDate(n.date) === getDate(note.date))
+          }
+        }
+      })
+      return notesByDate
+    }
+  },
+  filters: {
+    dateFormat (date) {
+      let joiner = []
+      joiner.push(date.getDate())
+      joiner.push(date.getMonth())
+      joiner.push(date.getFullYear())
+      return joiner.join('.')
     }
   },
   beforeDestroy () {
@@ -330,10 +378,29 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
-.notes
+.dates_container
   display flex
+  flex-direction column
   flex-wrap wrap
   justify-content flex-start
+  margin-bottom 120px
+  .date
+    margin-left 15px
+    position relative
+    .date_label_container
+      position absolute
+      left -13px
+      width 20px
+      height calc(100% - 60px)
+      top 0
+      h3
+        position sticky
+        transform rotate(-90deg) translateX(-60px)
+        top 40px
+    .notes_container
+      display flex
+      flex-wrap wrap
+      justify-content flex-start
 .note
   position relative
   display flex
@@ -341,16 +408,21 @@ export default {
   min-width 32%
   max-width 98%
   margin 5px
-  border 1px solid black
-  border-radius 5px
+  padding-bottom 30px
+  // border-bottom 1px dotted #80cbc4
+  box-shadow: -1px 2px 5px #80cbc44f;
   @media (orientation: portrait)
     min-width 95%
     margin-left 2.5%
     margin-right 2.5%
-  .note_edit
+  .toolbar_container
     position absolute
+    display flex
+    flex-direction column-reverse
     bottom 5px
     right 5px
+    .tool
+      margin 5px
 .create
   position fixed
   bottom 10px
