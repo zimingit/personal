@@ -3,7 +3,10 @@
     <span class="logo v_line" :class="size" :style="linesStyleComputed"></span>
     <span class="logo h_line" :class="size" :style="linesStyleComputed"></span>
     <span class="logo d_line" :class="size" :style="linesStyleComputed"></span>
-    <p class="label" :class="size" :style="labelStyleComputed">{{label}}</p>
+    <div class="label" :class="size">
+      <slot name="icon"></slot>
+      <p :class="size" :style="labelStyleComputed" v-show="label">{{label}}</p>
+    </div>
 </div>
 </template>
 <script>
@@ -14,7 +17,7 @@ export default {
     // small, medium, large, extra-large
     size: {
       type: String,
-      default: 'medium'
+      default: 'small'
     },
     label: {
       type: String,
@@ -71,8 +74,12 @@ export default {
 
 .label
   z-index 1
-  font-weight bold
   pointer-events none
+  display flex
+  align-items center
+  justify-content center
+  p
+    font-weight bold
   &::selection
     background transparent
   &.small

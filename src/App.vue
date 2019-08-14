@@ -96,7 +96,7 @@ a
 .fade-scale-down-enter, .fade-scale-down-leave-active
   opacity 0
   position absolute
-  transform scale(2)
+  transform scale(1.3)
 
 // fade с увеличением
 .fade-scale-up-enter-active, .fade-scale-up-leave-active
@@ -104,10 +104,25 @@ a
   transition-duration .4s
 .fade-scale-up-enter, .fade-scale-up-leave-active
   opacity 0
-  transform scale(0)
+  transform scale(.8)
 
+// работа со списками
+.item-list-move
+  transition transform .5s
+.item-list-enter-active, .item-list-leave-active
+  transition-property opacity, transform, filter
+  transition-duration .4s
+.item-list-enter, .item-list-leave-active
+  opacity 0
+  filter blur(3px)
+  transform scale(.8) 
 @keyframes rotation {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+// Глушим outline в редакторе
+.ProseMirror
+  &:focus
+    outline none
 </style>

@@ -3,203 +3,208 @@
   <div class="top">
     <h1> Notesy {{user}}</h1>
     <div class="create">
-    <NotesyLogo
-      @click.native="toggleEditor()"
-      :size="sizeEditorComputed"
-      :label="labelEditorComputed"
-      backgroundColor="#80CBC4"
-      labelColor="white"
-      class="tool_item"
-      />
-    <NotesyLogo v-if="showEditor"
-      @click.native="closeEditorWithoutSave()"
-      size="small"
-      label="close"
-      backgroundColor="#80CBC4"
-      labelColor="white"
-      class="tool_item"
-      />
+      <NotesyLogo v-if="!showEditor"
+        @click.native="showEditorDialog()"
+        label="NEW"
+        backgroundColor="#80CBC4"
+        labelColor="white"
+        class="tool_item">
+      </NotesyLogo>
+      <NotesyLogo v-if="showEditor"
+        @click.native="closeEditor()"
+        size="small"
+        backgroundColor="#80CBC4"
+        labelColor="white"
+        class="tool_item">
+          <icon name="checked" slot="icon" />
+      </NotesyLogo>
+      <NotesyLogo v-if="showEditor"
+        @click.native="closeEditorWithoutSave()"
+        backgroundColor="#80CBC4"
+        labelColor="white"
+        class="tool_item">
+          <icon name="close" slot="icon" />
+      </NotesyLogo>
     </div>
   </div>
   <transition name="fade-scale-up">
-  <div class="dates_container" v-if="!showEditor">
+  <div class="dates_container" :class="{'scaled_down': showEditor}">
     <div class="date" v-for="day in noteByDatesComputed" :key="day.date.seconds">
       <div class="date_label_container">
         <h3>{{day.date}}</h3>
       </div>
-      <div class="notes_container">
-        <div class="note" v-for="(note, i) in day.notes" :key="note.name + i + day.date.seconds">
-          <p>{{note.name}}</p>
+      <transition-group name="item-list" class="notes_container" tag="div">
+        <div v-for="note in day.notes"
+             class="note"
+             :style="{'border-left': note.color? `5px solid ${note.color}` : ''}"
+             :key="note.id">
+          <h2>{{note.name}}</h2>
           <div v-html="note.description"></div>
           <p>{{note.tags.join(', ')}}</p>
           <div class="toolbar_container">
-            <div v-if="!sure[note.id]" class="tool note_remove" @click="toggleSure(note)">
-              <NotesyLogo size="small" label="Delete" backgroundColor="#80CBC4" labelColor="white"/>
+            <div v-if="!sure[note.id]" class="tool note_remove" @click="toggleSure(note)" title="Delete">
+              <NotesyLogo backgroundColor="#80CBC4" labelColor="white">
+                <icon name="close" slot="icon" />
+              </NotesyLogo>
             </div>
-            <div v-else class="tool note_remove" @click="remove(note)">
-              <NotesyLogo size="small" label="Sure?" backgroundColor="#ff5722" labelColor="white"/>
+            <div v-else class="tool note_remove" @click="remove(note)" title="Delete">
+              <NotesyLogo label="Sure?" backgroundColor="#ff5722" labelColor="white"/>
             </div>
-            <div class="tool note_edit" @click="editNote(note)">
-              <NotesyLogo size="small" label="Edit" backgroundColor="#80CBC4" labelColor="white"/>
+            <div class="tool note_edit" @click="editNote(note)" title="Edit">
+              <NotesyLogo backgroundColor="#80CBC4" labelColor="white">
+                <icon name="edit" slot="icon" />
+              </NotesyLogo>
             </div>
           </div>
         </div>
-      </div>
+      </transition-group>
     </div>
   </div>
   </transition>
   <transition name="fade-scale-down" tag="div" class="editor_wrapper">
   <div class="editor editor_wrapper" v-if="showEditor">
+    <div class="note_statuses">
+      <ColorPicker figure="circle" @change="setColor"/>
+    </div>
     <editor-menu-bar :editor="editor" v-slot="{ commands, isActive }">
       <div class="menubar">
 
-        <button
+        <button title="bold"
           class="menubar__button"
           :class="{ 'is-active': isActive.bold() }"
           @click="commands.bold"
         >
-        bold
           <icon name="bold" />
         </button>
 
-        <button
+        <button title="italic"
           class="menubar__button"
           :class="{ 'is-active': isActive.italic() }"
           @click="commands.italic"
         >
-        italic
           <icon name="italic" />
         </button>
 
-        <button
+        <button title="strike"
           class="menubar__button"
           :class="{ 'is-active': isActive.strike() }"
           @click="commands.strike"
         >
-        strike
           <icon name="strike" />
         </button>
 
-        <button
+        <button title="underline"
           class="menubar__button"
           :class="{ 'is-active': isActive.underline() }"
           @click="commands.underline"
         >
-        underline
           <icon name="underline" />
         </button>
 
-        <button
+        <button title="code"
           class="menubar__button"
           :class="{ 'is-active': isActive.code() }"
           @click="commands.code"
         >
-        code
           <icon name="code" />
         </button>
 
-        <button
+        <button title="paragraph"
           class="menubar__button"
           :class="{ 'is-active': isActive.paragraph() }"
           @click="commands.paragraph"
         >
-        paragraph
           <icon name="paragraph" />
         </button>
 
-        <button
+        <button title="H1"
           class="menubar__button"
           :class="{ 'is-active': isActive.heading({ level: 1 }) }"
           @click="commands.heading({ level: 1 })"
         >
-          H1
+          <span>H1</span>
         </button>
 
-        <button
+        <button title="H2"
           class="menubar__button"
           :class="{ 'is-active': isActive.heading({ level: 2 }) }"
           @click="commands.heading({ level: 2 })"
         >
-          H2
+          <span>H2</span>
         </button>
 
-        <button
+        <button title="H3"
           class="menubar__button"
           :class="{ 'is-active': isActive.heading({ level: 3 }) }"
           @click="commands.heading({ level: 3 })"
         >
-          H3
+          <span>H3</span>
         </button>
 
-        <button
+        <button title="bullet list"
           class="menubar__button"
           :class="{ 'is-active': isActive.bullet_list() }"
           @click="commands.bullet_list"
         >
-        bullet list
           <icon name="ul" />
         </button>
 
-        <button
+        <button title="ordered list"
           class="menubar__button"
           :class="{ 'is-active': isActive.ordered_list() }"
           @click="commands.ordered_list"
         >
-        ordered list
           <icon name="ol" />
         </button>
 
-        <button
+        <button title="blockquote"
           class="menubar__button"
           :class="{ 'is-active': isActive.blockquote() }"
           @click="commands.blockquote"
         >
-        blockquote
           <icon name="quote" />
         </button>
 
-        <button
+        <button title="code block"
           class="menubar__button"
           :class="{ 'is-active': isActive.code_block() }"
           @click="commands.code_block"
         >
-        code block
           <icon name="code" />
         </button>
 
-        <button
+        <button title="hr"
           class="menubar__button"
           @click="commands.horizontal_rule"
         >
-        hr
           <icon name="hr" />
         </button>
 
-        <button
+        <button title="undo"
           class="menubar__button"
           @click="commands.undo"
         >
-        undo
           <icon name="undo" />
         </button>
 
-        <button
+        <button title="redo"
           class="menubar__button"
           @click="commands.redo"
         >
-        redo
           <icon name="redo" />
         </button>
 
       </div>
     </editor-menu-bar>
-    <div>
-      <p>Название:<span><input v-model="noteToEdit.name"></span></p>
-      <p>Теги:<span><input v-model="noteToEdit.tags"></span></p>
-      <p>Описание:<span>
+    <div class="edit_fields">
+      <div class="name"><span>Название</span>
+        <input v-model="noteToEdit.name" placeholder=". . . . . .">
+      </div>
+      <!-- <p class="tags"><span>Теги:</span><input v-model="noteToEdit.tags"></p> -->
+      <div class="description">
+        <span>Описание</span>
         <editor-content class="editor__content" :editor="editor" />
-      </span>
-      </p>
+      </div>
     </div>
   </div>
   </transition>
@@ -207,6 +212,7 @@
 </template>
 <script>
 import NotesyLogo from './NotesyLogo'
+import ColorPicker from '../ColorPicker'
 import Icon from '../Icon'
 import { Editor, EditorContent, EditorMenuBar } from 'tiptap'
 import {
@@ -270,16 +276,14 @@ export default {
     NotesyLogo,
     EditorContent,
     EditorMenuBar,
-    Icon
+    Icon,
+    ColorPicker
   },
   created () {
     // Если пришли с user'ом и в localStorage сохранен user и они отличаются, то перезаписываем ls
     if (this.user && localStorage.user && this.user !== localStorage.user) {
       localStorage.user = this.user
     }
-    setTimeout(() => {
-      console.log(this.notes)
-    }, 5000)
   },
   methods: {
     editNote (note) {
@@ -312,19 +316,13 @@ export default {
       this.$set(this.sure, note.id, true)
       setTimeout(_ => { this.sure[note.id] = false }, 2000)
     },
-    toggleEditor () {
-      if (this.showEditor) {
-        this.closeEditor()
-      } else {
-        this.showEditorDialog()
-      }
-    },
     showEditorDialog () {
       let note = {
         date: new Date(),
         description: 'Описание задачи',
-        name: 'Название',
+        name: '',
         user: '',
+        color: '',
         tags: ['tags']
       }
       this.editNote(note)
@@ -352,23 +350,13 @@ export default {
       joiner.push(date.getMonth())
       joiner.push(date.getFullYear())
       return joiner.join('.')
+    },
+    // ---- Методы установки доп.свойств ---- //
+    setColor (color) {
+      this.noteToEdit.color = color
     }
   },
   computed: {
-    labelEditorComputed () {
-      let text = 'Create'
-      if (this.showEditor) {
-        text = 'Save'
-      }
-      return text
-    },
-    sizeEditorComputed () {
-      let size = 'medium'
-      if (this.showEditor) {
-        size = 'small'
-      }
-      return size
-    },
     noteByDatesComputed () {
       let notesByDate = {}
       const getDate = (date) => this.getDateFromTimestamp(date)
@@ -401,15 +389,18 @@ export default {
 .dates_container
   display flex
   flex-direction column
-  flex-wrap wrap
   justify-content flex-start
-  margin-bottom 120px
+  margin-bottom 20px
+  transition opacity .3s, transform .3s
+  &.scaled_down
+    opacity 0
+    transform scale(.9, 1)
   .date
-    margin-left 15px
     position relative
+    margin-bottom 20px
     .date_label_container
       position absolute
-      left -13px
+      left 0px
       width 20px
       height calc(100% - 60px)
       top 0
@@ -418,27 +409,32 @@ export default {
         transform rotate(-90deg) translateX(-60px)
         top 40px
     .notes_container
+      margin-left 15px
       display flex
       flex-wrap wrap
-      justify-content flex-start
 .note
   position relative
   display flex
   flex-direction column
-  min-width 32%
-  max-width 98%
+  min-width 30%
+  flex-grow 1
+  max-width 100%
+  max-height 50vh
+  overflow-y hidden
   margin 5px
   padding-bottom 30px
   // border-bottom 1px dotted #80cbc4
   box-shadow: -1px 2px 5px #80cbc44f;
   @media (orientation: portrait)
     min-width 95%
-    margin-left 2.5%
-    margin-right 2.5%
+    max-width 95%
   &:hover
+    max-height none
     .toolbar_container
       opacity 1
       transform scale(1)
+  h2
+    padding 10px
   .toolbar_container
     position absolute
     display flex
@@ -450,7 +446,7 @@ export default {
     transform-origin right
     transition opacity .5s, transform .3s
     .tool
-      margin 5px
+      margin 2px
 .create
   display flex
   flex-direction row-reverse
@@ -467,17 +463,90 @@ export default {
   left 0
   width 100vw
   height 100vh
+  z-index 10
+  .note_statuses
+    position absolute
+    top 10px
+    right 10px
+  &:before
+    content ''
+    position absolute
+    height 100vh
+    width 100vw
+    background white
+    right 0
+    top 0
+    z-index -1
+    pointer-events none
   .menubar
     padding-top 50px
     button
+      min-width 35px
+      min-height 35px
       background #80CBC4
       border none
       margin 5px
       border none
       outline none
-      font-weight bold
+      cursor pointer
       color white
       text-align center
       padding 5px
       border-radius 4px
+      &:hover
+        box-shadow 1px 1px 2px #009688
+  .edit_fields
+    display flex
+    flex-direction column
+    align-items flex-start
+    .name
+      position relative
+      margin-top 10px
+      width 100%
+      span
+        position absolute
+        background white
+        padding 0 5px
+        font-size 15px
+        top -10px
+        left 10px
+      input
+        font-size 18px
+        outline none
+        color #616161
+        border-top .5px solid grey
+        border-left none
+        border-right none
+        border-bottom .5px solid grey
+        padding 10px 15px
+        min-width 100%
+        &:focus
+          border-bottom 1px solid #80CBC4
+    .description
+      position relative
+      margin-top 20px
+      width 100%
+      span
+        position absolute
+        z-index 1
+        border-radius 3px
+        background white
+        padding 0 5px
+        font-size 15px
+        top -10px
+        left 10px
+      .editor__content
+        border-top .5px solid grey
+        min-width 100%
+        max-height calc(100vh - 198px)
+        overflow-y auto
+        &::-webkit-scrollbar
+          width 5px
+          height 5px
+        &::-webkit-scrollbar-track
+          background transparent
+        &::-webkit-scrollbar-thumb
+          background #80CBC4
+          border-radius 2.5px
+
 </style>
