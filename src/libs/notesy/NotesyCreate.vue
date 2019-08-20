@@ -1,7 +1,7 @@
 <template>
 <div class="notesy_create">
   <div class="notesy_create_wrapper">
-    <NotesyLogo size="extra-large" label="notesy"/>
+    <NotesyLogo size="extra-large" label="notesy" action="passive"/>
     <p for="name" class="text">Set a secret word</p>
     <p>🡇</p>
     <input id="name" placeholder="alexeyzimin" v-model="user" @keyup.enter="setUser()">

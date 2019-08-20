@@ -1,12 +1,12 @@
 <template>
   <div class="menu_layout">
     <div class="opener">
-      <img src="../assets/menu/red.svg" alt="Menu" @click="showMenu('red')">
-      <img src="../assets/menu/yellow.svg" alt="Menu" @click="showMenu('yellow')">
-      <img src="../assets/menu/green.svg" alt="Menu" @click="showMenu('green')">
-      <img src="../assets/menu/blue.svg" alt="Menu" @click="showMenu('blue')">
+      <div class="red" @click="showMenu('red')"></div>
+      <div class="yellow" @click="showMenu('yellow')"></div>
+      <div class="green" @click="showMenu('green')"></div>
+      <div class="blue" @click="showMenu('blue')"></div>
     </div>
-    <div class="menu" :class="[{'_show': openMenu}]" :style="{'background-color': colorComputed}" @click="openMenu = !openMenu">
+    <div class="menu" :class="[{'_show': isOpen}]" :style="{'background-color': colorComputed}" @click="closeMenu()">
       <div :class="['menu_items_layout', {'__scale': powerOffDialog}]">
         <div class="closer">
           <img src="../assets/menu/close.svg" alt="Close">
@@ -17,7 +17,7 @@
         <router-link to="/News"><h1>News</h1></router-link>
       </div>
     </div>
-    <div v-if="openMenu" class="power_off">
+    <div v-if="isOpen" class="power_off">
       <transition name="fade-power">
         <span v-if="!powerOffDialog" @click="powerOff()">OUT</span>
         <poff v-else :color="colorComputed" @click.native="powerOff()"></poff>
@@ -45,7 +45,7 @@ export default {
   name: 'App-Menu',
   data () {
     return {
-      openMenu: false,
+      isOpen: false,
       colors: colors,
       powerOffDialog: false
     }
@@ -53,14 +53,23 @@ export default {
   created () {
   },
   methods: {
+    closeMenu () {
+      this.isOpen = false
+      this.vibrate(40)
+    },
     showMenu (color) {
-      window.navigator.vibrate(30)
       this.colors.active = color
-      this.openMenu = !this.openMenu
+      this.isOpen = true
+      this.vibrate(40)
     },
     powerOff () {
-      window.navigator.vibrate(30)
       this.powerOffDialog = !this.powerOffDialog
+      this.vibrate(40)
+    },
+    vibrate (duration) {
+      if (window.navigator && window.navigator.vibrate) {
+        window.navigator.vibrate(duration)
+      }
     }
   },
   computed: {
@@ -109,13 +118,25 @@ export default {
   align-items flex-start
   justify-content space-between
   width 60px
-  cursor pointer
   margin-left 5px
-  img
+  cursor pointer
+  .red, .yellow, .green, .blue
+    cursor pointer
     width 10px
+    height 40px
+    background-repeat no-repeat
+    background-size contain
     transition all .3s
     &:hover
-      transform scale(1.5)
+      transform scale(1.2)
+  .red
+    background-image url('../assets/menu/red.svg')
+  .yellow
+    background-image url('../assets/menu/yellow.svg')
+  .green
+    background-image url('../assets/menu/green.svg')
+  .blue
+    background-image url('../assets/menu/blue.svg')
 .menu_layout
   position absolute
   z-index 90000

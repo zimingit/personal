@@ -14,14 +14,12 @@
         @click.native="closeEditor()"
         size="small"
         backgroundColor="#80CBC4"
-        labelColor="white"
         class="tool_item">
           <icon name="checked" slot="icon" />
       </NotesyLogo>
       <NotesyLogo v-if="showEditor"
         @click.native="closeEditorWithoutSave()"
         backgroundColor="#80CBC4"
-        labelColor="white"
         class="tool_item">
           <icon name="close" slot="icon" />
       </NotesyLogo>
@@ -34,13 +32,17 @@
         <h3>{{day.date}}</h3>
       </div>
       <transition-group name="item-list" class="notes_container" tag="div">
-        <div v-for="note in day.notes"
+        <div v-for="(note, i) in day.notes"
              class="note"
+             :class="{'hover': hoverIndex === i + day.date}"
+             @mouseover="hoverIndex = i + day.date"
              :style="{'border-left': note.color? `5px solid ${note.color}` : ''}"
              :key="note.id">
+          <!-- note body -->
           <h2>{{note.name}}</h2>
           <div v-html="note.description"></div>
-          <p>{{note.tags.join(', ')}}</p>
+          <TagInput class="note_tags" :value="note.tags" decorator="#" :editable="false" @select="selectTag"/>
+          <!-- note toolbar -->
           <div class="toolbar_container">
             <div v-if="!sure[note.id]" class="tool note_remove" @click="toggleSure(note)" title="Delete">
               <NotesyLogo backgroundColor="#80CBC4" labelColor="white">
@@ -63,9 +65,18 @@
   </transition>
   <transition name="fade-scale-down" tag="div" class="editor_wrapper">
   <div class="editor editor_wrapper" v-if="showEditor">
-    <div class="note_statuses">
-      <ColorPicker figure="circle" @change="setColor"/>
+    <div class="note_tools">
+      <ColorPicker class="edit_tool_item" figure="circle" @change="setColor"/>
+      <div class="edit_tool_item settings" @click="toggleShowAdditional()">
+        <icon name="settings" slot="icon" invert="0" size="normal"/>
+      </div>
     </div>
+    <!-- SideBar -->
+    <AppSideBar :show="showAdditionalConfig">
+      <div slot="content" class="additional_tools_wrapper">
+        <TagInput :value="noteToEdit.tags" decorator="#" @change="setTags"/>
+      </div>
+    </AppSideBar>
     <editor-menu-bar :editor="editor" v-slot="{ commands, isActive }">
       <div class="menubar">
 
@@ -200,7 +211,6 @@
       <div class="name"><span>Название</span>
         <input v-model="noteToEdit.name" placeholder=". . . . . .">
       </div>
-      <!-- <p class="tags"><span>Теги:</span><input v-model="noteToEdit.tags"></p> -->
       <div class="description">
         <span>Описание</span>
         <editor-content class="editor__content" :editor="editor" />
@@ -213,6 +223,8 @@
 <script>
 import NotesyLogo from './NotesyLogo'
 import ColorPicker from '../ColorPicker'
+import AppSideBar from '@/components/AppSideBar'
+import TagInput from '../TagInput'
 import Icon from '../Icon'
 import { Editor, EditorContent, EditorMenuBar } from 'tiptap'
 import {
@@ -243,6 +255,9 @@ export default {
       notes: [],
       sure: {},
       showEditor: false,
+      showAdditionalConfig: false,
+      selectedTag: '',
+      hoverIndex: '',
       editor: new Editor({
         extensions: [
           new Blockquote(),
@@ -277,7 +292,9 @@ export default {
     EditorContent,
     EditorMenuBar,
     Icon,
-    ColorPicker
+    ColorPicker,
+    AppSideBar,
+    TagInput
   },
   created () {
     // Если пришли с user'ом и в localStorage сохранен user и они отличаются, то перезаписываем ls
@@ -286,6 +303,9 @@ export default {
     }
   },
   methods: {
+    toggleShowAdditional () {
+      this.showAdditionalConfig = !this.showAdditionalConfig
+    },
     editNote (note) {
       this.editor.setContent(note.description)
       this.noteToEdit = note
@@ -354,6 +374,18 @@ export default {
     // ---- Методы установки доп.свойств ---- //
     setColor (color) {
       this.noteToEdit.color = color
+    },
+    setTags (tags) {
+      this.noteToEdit.tags = tags
+    },
+    clearFocus () {
+      this.hoverIndex = ''
+    },
+    // ----- Методы фильтрации ----- //
+    selectTag (tag) {
+      console.log('filterBy: ' + tag)
+      // this.notes =this.$db.collection('notes').where('user', '==', this.user).orderBy('date')
+      this.clearFocus()
     }
   },
   computed: {
@@ -416,23 +448,26 @@ export default {
   position relative
   display flex
   flex-direction column
+  justify-content space-between
   min-width 30%
   flex-grow 1
   max-width 100%
   max-height 50vh
+  min-height 130px
   overflow-y hidden
   margin 5px
-  padding-bottom 30px
   // border-bottom 1px dotted #80cbc4
   box-shadow: -1px 2px 5px #80cbc44f;
   @media (orientation: portrait)
     min-width 95%
     max-width 95%
-  &:hover
+  &.hover
     max-height none
     .toolbar_container
       opacity 1
       transform scale(1)
+  .note_tags
+    justify-content flex-end
   h2
     padding 10px
   .toolbar_container
@@ -464,10 +499,23 @@ export default {
   width 100vw
   height 100vh
   z-index 10
-  .note_statuses
+  .note_tools
     position absolute
-    top 10px
-    right 10px
+    top 5px
+    right 0
+    z-index 3
+    display flex
+    align-items center
+    padding 0 10px 0 10px
+    border-radius 20px 0 0 20px
+    box-shadow -3px 1px 3px #E0E0E0
+    height 40px
+    .edit_tool_item
+      margin-left 10px
+      &.settings
+        padding 2px
+        border-radius 50%
+        background #80cbc4
   &:before
     content ''
     position absolute
@@ -478,6 +526,9 @@ export default {
     top 0
     z-index -1
     pointer-events none
+  .additional_tools_wrapper
+    padding 10px
+    padding-top 50px
   .menubar
     padding-top 50px
     button
@@ -495,6 +546,8 @@ export default {
       border-radius 4px
       &:hover
         box-shadow 1px 1px 2px #009688
+      &.is-active
+        border-radius 50%
   .edit_fields
     display flex
     flex-direction column

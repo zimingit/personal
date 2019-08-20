@@ -115,7 +115,7 @@ a
 .item-list-enter, .item-list-leave-active
   opacity 0
   filter blur(3px)
-  transform scale(.8) 
+  transform scale(.8)
 @keyframes rotation {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }

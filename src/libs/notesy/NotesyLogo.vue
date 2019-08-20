@@ -1,5 +1,5 @@
 <template>
-<div class="notesy_logo" :class="size">
+<div class="notesy_logo" :class="[size, action]">
     <span class="logo v_line" :class="size" :style="linesStyleComputed"></span>
     <span class="logo h_line" :class="size" :style="linesStyleComputed"></span>
     <span class="logo d_line" :class="size" :style="linesStyleComputed"></span>
@@ -34,6 +34,10 @@ export default {
     animation: {
       type: String,
       default: ''
+    },
+    action: {
+      type: String,
+      default: 'active'
     }
   },
   data () {
@@ -59,6 +63,11 @@ export default {
   align-items center
   position relative
   border-radius 50%
+  &.active
+    cursor pointer
+  &.passive
+    cursor default
+    pointer-events none
   &.small
     width 50px
     height 56px
