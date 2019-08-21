@@ -110,11 +110,10 @@ a
 .item-list-move
   transition transform .5s
 .item-list-enter-active, .item-list-leave-active
-  transition-property opacity, transform, filter
+  transition-property opacity, transform
   transition-duration .4s
 .item-list-enter, .item-list-leave-active
   opacity 0
-  filter blur(3px)
   transform scale(.8)
 @keyframes rotation {
   from { transform: rotate(0deg); }

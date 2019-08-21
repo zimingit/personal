@@ -32,16 +32,17 @@
         <h3>{{day.date}}</h3>
       </div>
       <transition-group name="item-list" class="notes_container" tag="div">
-        <div v-for="(note, i) in day.notes"
-             class="note"
-             :class="{'hover': hoverIndex === i + day.date}"
-             @mouseover="hoverIndex = i + day.date"
-             :style="{'border-left': note.color? `5px solid ${note.color}` : ''}"
-             :key="note.id">
-          <!-- note body -->
-          <h2>{{note.name}}</h2>
-          <div v-html="note.description"></div>
-          <TagInput class="note_tags" :value="note.tags" decorator="#" :editable="false" @select="selectTag"/>
+        <div class="note_wrapper"  v-for="(note, i) in day.notes" :key="note.id">
+          <div v-panleft class="note"
+              :class="{'hover': hoverIndex === i + day.date}"
+              @mouseover="hoverIndex = i + day.date"
+              :style="{'border-left': note.color? `5px solid ${note.color}` : ''}"
+              >
+            <!-- note body -->
+            <h2>{{note.name}}</h2>
+            <div v-html="note.description"></div>
+            <TagInput class="note_tags" :value="note.tags" decorator="#" :editable="false" @select="selectTag"/>
+          </div>
           <!-- note toolbar -->
           <div class="toolbar_container">
             <div v-if="!sure[note.id]" class="tool note_remove" @click="toggleSure(note)" title="Delete">
@@ -296,6 +297,56 @@ export default {
     AppSideBar,
     TagInput
   },
+  directives: {
+    panleft: {
+      isLiteral: true,
+      bind (el) {
+        const stopline = 80
+        const touchMoveHandler = (e) => {
+          if (e.touches.length === 1) {
+            if (!el.dataset.x) {
+              el.dataset.x = e.touches[0].clientX
+              el.dataset.xStart = e.touches[0].clientX
+            } else {
+              const touchX = parseInt(e.touches[0].clientX)
+              const touchBefore = parseInt(el.dataset.x)
+              const transform = touchX - touchBefore
+              if (transform <= 0) {
+                el.style.transform = `translateX(${parseInt(transform)}px)`
+              }
+              el.dataset.x = touchBefore
+            }
+          }
+        }
+        const touchEndHandler = (e) => {
+          const touchX = e.changedTouches[0].clientX
+          const touchStart = parseInt(el.dataset.xStart)
+          const path = touchStart - touchX
+          if (path >= stopline) {
+            el.style.transition = 'transform .3s ease-in-out'
+            el.style.transform = `translateX(${-stopline}px)`
+            el.classList.add('pinned')
+          } else {
+            el.style.transition = 'transform .1s ease-in-out'
+            el.style.transform = 'translateX(0)'
+            el.classList.remove('pinned')
+          }
+          setTimeout(() => {
+            el.style.transition = ''
+          }, 200)
+        }
+        el.addEventListener('touchmove', touchMoveHandler)
+        el.addEventListener('touchend', touchEndHandler)
+        el.$destroy = () => {
+          el.removeEventListener('touchmove', touchMoveHandler)
+          el.removeEventListener('touchend', touchEndHandler)
+        }
+      },
+      unbind (el) {
+        el.$destroy()
+      }
+    }
+  },
   created () {
     // Если пришли с user'ом и в localStorage сохранен user и они отличаются, то перезаписываем ls
     if (this.user && localStorage.user && this.user !== localStorage.user) {
@@ -444,8 +495,31 @@ export default {
       margin-left 15px
       display flex
       flex-wrap wrap
+      .note_wrapper
+        display flex
+        position relative
+        @media (orientation: portrait)
+          min-width 95%
+          max-width 95%
+        .toolbar_container
+          position absolute
+          display flex
+          flex-direction column-reverse
+          right 0
+          bottom 10px
+          opacity 0
+          transform scale(0)
+          transform-origin right
+          transition opacity .5s, transform .3s
+          @media (orientation: portrait)
+            z-index 1
+            transform scale(1)
+            opacity 1
+          .tool
+            margin 2px
 .note
   position relative
+  z-index 3
   display flex
   flex-direction column
   justify-content space-between
@@ -455,33 +529,22 @@ export default {
   max-height 50vh
   min-height 130px
   overflow-y hidden
+  background white
   margin 5px
   // border-bottom 1px dotted #80cbc4
   box-shadow: -1px 2px 5px #80cbc44f;
   @media (orientation: portrait)
-    min-width 95%
-    max-width 95%
+    min-width 100%
+    max-width 100%
   &.hover
     max-height none
-    .toolbar_container
-      opacity 1
-      transform scale(1)
+    // .toolbar_container
+    //   opacity 1
+    //   transform scale(1)
   .note_tags
     justify-content flex-end
   h2
     padding 10px
-  .toolbar_container
-    position absolute
-    display flex
-    flex-direction column-reverse
-    bottom 5px
-    right 5px
-    opacity 0
-    transform scale(0)
-    transform-origin right
-    transition opacity .5s, transform .3s
-    .tool
-      margin 2px
 .create
   display flex
   flex-direction row-reverse
