@@ -301,43 +301,44 @@ export default {
     panleft: {
       isLiteral: true,
       bind (el) {
-        const stopline = 80
+        const stopline = -80
+        const touchStartHandler = (e) => {
+          el.dataset.xStart = e.changedTouches[0].clientX
+          el.dataset.transform = el.dataset.transform || 0
+        }
         const touchMoveHandler = (e) => {
-          if (e.touches.length === 1) {
-            if (!el.dataset.x) {
-              el.dataset.x = e.touches[0].clientX
-              el.dataset.xStart = e.touches[0].clientX
-            } else {
-              const touchX = parseInt(e.touches[0].clientX)
-              const touchBefore = parseInt(el.dataset.x)
-              const transform = touchX - touchBefore
-              if (transform <= 0) {
-                el.style.transform = `translateX(${parseInt(transform)}px)`
-              }
-              el.dataset.x = touchBefore
-            }
+          const path = parseInt(el.dataset.xStart) - e.changedTouches[0].clientX
+          const transform = parseInt(el.dataset.transform) - path
+          if (transform <= 0) {
+            requestAnimationFrame(() => {
+              el.style.transform = `translateX(${parseInt(transform)}px)`
+            })
           }
         }
         const touchEndHandler = (e) => {
-          const touchX = e.changedTouches[0].clientX
-          const touchStart = parseInt(el.dataset.xStart)
-          const path = touchStart - touchX
-          if (path >= stopline) {
+          const path = parseInt(el.dataset.xStart) - e.changedTouches[0].clientX
+          const transform = parseInt(el.dataset.transform)
+          el.dataset.transform = transform - path
+          if (parseInt(el.dataset.transform) < stopline) {
             el.style.transition = 'transform .3s ease-in-out'
-            el.style.transform = `translateX(${-stopline}px)`
+            el.style.transform = `translateX(${stopline}px)`
+            el.dataset.transform = stopline
             el.classList.add('pinned')
           } else {
             el.style.transition = 'transform .1s ease-in-out'
             el.style.transform = 'translateX(0)'
+            el.dataset.transform = 0
             el.classList.remove('pinned')
           }
           setTimeout(() => {
             el.style.transition = ''
-          }, 200)
+          }, 300)
         }
+        el.addEventListener('touchstart', touchStartHandler)
         el.addEventListener('touchmove', touchMoveHandler)
         el.addEventListener('touchend', touchEndHandler)
         el.$destroy = () => {
+          el.removeEventListener('touchstart', touchStartHandler)
           el.removeEventListener('touchmove', touchMoveHandler)
           el.removeEventListener('touchend', touchEndHandler)
         }
