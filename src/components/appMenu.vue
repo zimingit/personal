@@ -54,13 +54,13 @@ export default {
   },
   methods: {
     showMenu (color) {
-      window.navigator.vibrate(30)
       this.colors.active = color
       this.openMenu = !this.openMenu
+      window.navigator.vibrate(30)
     },
     powerOff () {
-      window.navigator.vibrate(30)
       this.powerOffDialog = !this.powerOffDialog
+      window.navigator.vibrate(30)
     }
   },
   computed: {
