@@ -2,6 +2,7 @@
   <div class="news_layout">
     <span class="news_name_bg">ALEKSEY<br/>ZIMIN</span>
 
+    <!--
     <div class="news_item create_dialog" v-if="createNews">
       <span class="news_item_number">04</span>
       <h1 class="news_item_label">Название: <input v-model="newsData.label"/></h1>
@@ -12,12 +13,12 @@
         <div class="news_item_description_content">
         </div>
           Описание: <input v-model="newsData.description"/>
-        </div>
+      </div>
       <button @click="addNews()">Добавить</button>
       <button @click="hideCreateDialog()">Закрыть</button>
-    </div>
       </div>
-
+      </div>
+    -->
     <div class="news_item_wrapper">
       <div class="news_item">
         <h1 class="news_item_label">MSK VUE.JS MEETUP #2</h1>
