@@ -2,10 +2,26 @@
   <div class="news_layout">
     <span class="news_name_bg">ALEKSEY<br/>ZIMIN</span>
 
+    <div class="news_item create_dialog" v-if="createNews">
+      <span class="news_item_number">04</span>
+      <h1 class="news_item_label">Название: <input v-model="newsData.label"/></h1>
+      <div class="news_item_description_create">
+        <br/><br/><br/><br/>
+        <div class="news_item_description_icon_create">
+          Картинка: <input v-model="newsData.iconCircle"/>
+        <div class="news_item_description_content">
+        </div>
+          Описание: <input v-model="newsData.description"/>
+        </div>
+      <button @click="addNews()">Добавить</button>
+      <button @click="hideCreateDialog()">Закрыть</button>
+    </div>
+      </div>
+
     <div class="news_item_wrapper">
       <div class="news_item">
-        <span class="news_item_number">01</span>
         <h1 class="news_item_label">MSK VUE.JS MEETUP #2</h1>
+        <span class="news_item_number">01</span>
         <div class="news_item_description">
           <div class="news_item_description_icon">
           </div>
@@ -13,14 +29,14 @@
             <p>
             Вторая по счету встреча для разработчиков, где будем обсуждать прогрессивный фреймворк Vue.js в приятной компании за едой и напитками.
             <br/><br/>
+            <br/><br/>
             <strong>Когда? </strong> 15 августа, четверг
-            <br/><br/>
             <strong>Где? </strong> Москва, ул. Балчуг, 7
-            <br/><br/>
             <strong>Ты там будешь? </strong> Конечно :)
             <br/><br/>
-            <strong>Где почитать подробнее? </strong> <a href='https://voximplant.timepad.ru/event/1022185'>*Подготовленная кликабельная ссылка*</a>
+            <br/><br/>
             </p>
+            <strong>Где почитать подробнее? </strong> <a href='https://voximplant.timepad.ru/event/1022185'>*Подготовленная кликабельная ссылка*</a>
           </div>
         </div>
       </div>
@@ -75,8 +91,48 @@
         </figure>
       </div>
     </div>
+    <!-- <p>{{news}}</p> -->
+    <!-- <button class="add_news" @click="showCreateDialog()"> Создать </button> -->
   </div>
 </template>
+<script>
+export default {
+  data () {
+    return {
+      news: [],
+      createNews: false,
+      newsData: {
+        date: new Date(),
+        label: '',
+        description: '',
+        iconCircle: ''
+      }
+    }
+  },
+  firestore () {
+    return {
+      news: this.$db.collection('news').orderBy('date')
+    }
+  },
+  created () {
+    console.log(this.$db)
+  },
+  methods: {
+    showCreateDialog () {
+      this.createNews = true
+      document.getElementById('app').scrollTop = 0
+    },
+    hideCreateDialog () {
+      this.createNews = false
+    },
+    addNews () {
+      this.$db.collection('news').add(this.newsData)
+      this.hideCreateDialog()
+    }
+  }
+}
+</script>
+
 <style lang="stylus" scoped>
 figure
   margin -20px
@@ -168,6 +224,24 @@ figure
     text-align center
     letter-spacing 4px
     left auto
+
+//Создание контента
+.add_news
+  position fixed
+  bottom 10px
+  right 30px
+  border none
+  padding 15px
+  background #e0e0e0
+  border-radius 5px
+  cursor pointer
+  box-shadow 2px 2px 9px #bdbdbd
+  transition all .3s
+  outline none
+  &:hover
+    box-shadow 4px 4px 9px #bdbdbd
+  &:active
+    opacity .8
 
 // Хардкоды фоновых картинок :(
 .news_item_wrapper

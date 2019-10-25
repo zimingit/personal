@@ -89,8 +89,39 @@ a
 .fade-enter, .fade-leave-active
   opacity 0
 
+// fade с уменьшением
+.fade-scale-down-enter-active, .fade-scale-down-leave-active
+  transition-property opacity, transform
+  transition-duration .4s
+.fade-scale-down-enter, .fade-scale-down-leave-active
+  opacity 0
+  position absolute
+  transform scale(1.3)
+
+// fade с увеличением
+.fade-scale-up-enter-active, .fade-scale-up-leave-active
+  transition-property opacity, transform
+  transition-duration .4s
+.fade-scale-up-enter, .fade-scale-up-leave-active
+  opacity 0
+  transform scale(.8)
+
+// работа со списками
+.item-list-move
+  transition transform .5s
+.item-list-enter-active, .item-list-leave-active
+  transition-property opacity, transform
+  transition-duration .4s
+.item-list-enter, .item-list-leave-active
+  opacity 0
+  transform scale(.8)
 @keyframes rotation {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+// Глушим outline в редакторе
+.ProseMirror
+  &:focus
+    outline none
 </style>

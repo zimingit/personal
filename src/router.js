@@ -7,6 +7,8 @@ import Projects from './views/Projects.vue'
 import Forbidden from './views/Forbidden.vue'
 import Draggable from './libs/DragDrop.vue'
 import Gchart from './libs/Gchart.vue'
+import Notesy from './libs/notesy/Notesy.vue'
+import NotesyCreate from './libs/notesy/NotesyCreate.vue'
 
 Vue.use(Router)
 
@@ -53,6 +55,17 @@ export default new Router({
       path: '/Projects/Gchart',
       name: 'Gchart',
       component: Gchart
+    },
+    {
+      path: '/Projects/Notesy/:userName',
+      name: 'Notesy',
+      component: Notesy,
+      props: true
+    },
+    {
+      path: '/Projects/Notesy',
+      name: 'NotesyCreate',
+      component: NotesyCreate
     }
   ]
 })

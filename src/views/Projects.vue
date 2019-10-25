@@ -1,23 +1,23 @@
 <template>
   <div class="projects_layout">
     <div  v-for="(project, i) in projects" :key="project.name" class="project_item"
-    :style="getBackground(i)">
+    :style="getBackground(i, project)">
       <span class="pseudo top"></span>
       <span class="pseudo bot"></span>
       <div class="avatar_wrapper">
         <div class="symbol"
-            :style="[{'color': colors[i]},
-                     {'box-shadow': `inset 3px 3px ${volume}px 15px ${colors[i]}`}]">
+            :style="[{'color': project.personalColor || colors[i]},
+                     {'box-shadow': `inset 3px 3px ${volume}px 15px ${project.personalColor || colors[i]}`}]">
           <p>{{project.name[0].toUpperCase()}}</p>
           <span>{{project.name[1].toLowerCase()}}</span>
         </div>
-        <div class="circle pulse" v-for="ind in 4" :key="ind" :style="[{'animation-delay': `${ind - 1}s`}, {'background': colors[i]}]"></div>
+        <div class="circle pulse" v-for="ind in 4" :key="ind" :style="[{'animation-delay': `${ind - 1}s`}, {'background': project.personalColor || colors[i]}]"></div>
         <div class="circle"></div>
       </div>
       <h1>{{project.name}}</h1>
       <p class="description">{{project.description}}</p>
       <router-link :to="project.link">
-        <span class="button_show" :style="{'background': colors[i]}">Хочу посмотреть</span>
+        <span class="button_show" :style="{'background': project.personalColor || colors[i]}">Хочу посмотреть</span>
       </router-link>
     </div>
   </div>
@@ -48,6 +48,13 @@ const projectsConstList = [
     description: 'Простая отрисовка диаграммы Гантта.',
     link: '/Projects/Gchart',
     showDescription: false
+  },
+  {
+    name: 'Notesy',
+    description: 'Простой блокнот для заметок.',
+    link: '/Projects/Notesy',
+    showDescription: false,
+    personalColor: '#80CBC4'
   }
 ]
 const colors = ['#ea4335', '#fbbc05', '#4285f4', '#34a853', '#00bcd4', '#9c27b0', '#795548']
@@ -63,29 +70,9 @@ export default {
       volume: 50
     }
   },
-  created () {
-    // Анимация тени в зависимости от громкости
-    /* let vm = this
-    navigator.mediaDevices.getUserMedia({
-      audio: true
-    })
-    .then(stream => {
-      this.recorder = new MediaRecorder(stream)
-      this.recorder.ondataavailable = function(e) {
-        let v = '' + e.data.size
-        vm.volume = v[3]
-      }
-      setInterval(() => {
-        this.recorder.start()
-        setTimeout(() => {
-          this.recorder.stop()
-        }, 490)
-      }, 500)
-    }) */
-  },
   methods: {
-    getBackground (i) {
-      let c = this.colors[i]
+    getBackground (i, project) {
+      let c = project.personalColor || this.colors[i]
       return `background: linear-gradient(220deg, ${c + '0b'} 0%, ${c + '0b'} 50%, ${c + '05'} 50%, ${c + '05'} 100%)`
     }
   },
