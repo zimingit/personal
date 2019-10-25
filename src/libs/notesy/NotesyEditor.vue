@@ -165,7 +165,7 @@
       </div>
       <div class="description">
         <span>Описание</span>
-        <editor-content class="editor__content" :editor="editor" />
+        <editor-content class="editor__content" :editor="editor"/>
       </div>
     </div>
   </div>
@@ -194,7 +194,8 @@ import {
   Link,
   Strike,
   Underline,
-  History
+  History,
+  Placeholder
 } from 'tiptap-extensions'
 /**
  * note = {
@@ -237,7 +238,13 @@ export default {
           new Italic(),
           new Strike(),
           new Underline(),
-          new History()
+          new History(),
+          new Placeholder({
+            showOnlyWhenEditable: true,
+            emptyNodeText: node => {
+              return 'Write something ...'
+            }
+          })
         ],
         content: ''
       })
@@ -474,6 +481,14 @@ blockquote
 
 .editor__content
   p
+    &.is-empty
+      &:first-child::before
+        content attr(data-empty-text)
+        float left
+        color #aaa
+        pointer-events none
+        height 0
+        font-style italic
     code
       display inline-block
       padding .2rem .4rem

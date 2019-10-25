@@ -132,7 +132,7 @@ export default {
     showEditorDialog () {
       let note = {
         date: new Date(),
-        description: 'Описание задачи',
+        description: '',
         name: '',
         user: '',
         color: '',

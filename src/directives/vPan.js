@@ -3,7 +3,7 @@ export default Vue.directive('pan', {
   isLiteral: true,
   inserted (el, binding) {
     const stopline = binding.value.stopline || -100
-    const cantPan = (evt) => evt.path.some(n => n.tagName === 'PRE')
+    const cantPan = (evt) => (evt.path || []).some(n => n.tagName === 'PRE')
     const touchStartHandler = (e) => {
       if (cantPan(e)) return
       el.dataset.xStart = e.changedTouches[0].clientX
