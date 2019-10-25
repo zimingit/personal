@@ -14,7 +14,7 @@
 export default {
   name: 'NotesyLogo',
   props: {
-    // small, medium, large, extra-large
+    // baby, small, medium, large, extra-large
     size: {
       type: String,
       default: 'small'
@@ -68,6 +68,9 @@ export default {
   &.passive
     cursor default
     pointer-events none
+  &.baby
+    width 31px
+    height 31px
   &.small
     width 50px
     height 56px
@@ -91,6 +94,8 @@ export default {
     font-weight bold
   &::selection
     background transparent
+  &.baby
+    font-size 0
   &.small
     font-size 13px
   &.medium
@@ -117,6 +122,10 @@ export default {
 
 // Модификаторы размера
 .logo
+  &.baby
+    width 20px
+    height 30px
+    border-radius 5px
   &.small
     width 33px
     height 50px

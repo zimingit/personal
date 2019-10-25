@@ -11,6 +11,7 @@ module.exports = {
     themeColor: '#ffffff',
     msTileColor: '#ffffff'
   },
+  runtimeCompiler: true,
   devServer: {
     // host: 'localhost'
   }

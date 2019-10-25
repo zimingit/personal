@@ -69,6 +69,7 @@ export default {
     background #80cbc4
     font-size 14px
     color white
+    cursor pointer
     button
       outline none
       border none
@@ -89,7 +90,7 @@ export default {
 .content_input
   outline none
   border none
-  border-bottom 1px solid blue
+  border-bottom 1px solid #80CBC4
   margin 3px
   width 100px
   min-width 100px

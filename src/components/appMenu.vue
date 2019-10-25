@@ -104,10 +104,14 @@ export default {
     &:after
       width 100%
       left 0
+  @media (orientation: portrait)
+    cursor default
 
 .closer
   transition transform .5s
   cursor pointer
+  @media (orientation: portrait)
+    cursor default
   &:hover
     transform rotate(360deg)
     opacity .8
@@ -120,8 +124,9 @@ export default {
   width 60px
   margin-left 5px
   cursor pointer
+  @media (orientation: portrait)
+    cursor default
   .red, .yellow, .green, .blue
-    cursor pointer
     width 10px
     height 40px
     background-repeat no-repeat
@@ -166,6 +171,8 @@ export default {
       transform scale(1.1)
     &:active
       transform scale(1, 0)
+    @media (orientation: portrait)
+      cursor default
 
 .menu_items_layout
   transition all .2s

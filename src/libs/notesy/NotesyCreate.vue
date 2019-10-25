@@ -3,8 +3,8 @@
   <div class="notesy_create_wrapper">
     <NotesyLogo size="extra-large" label="notesy" action="passive"/>
     <p for="name" class="text">Set a secret word</p>
-    <p>🡇</p>
-    <input id="name" placeholder="alexeyzimin" v-model="user" @keyup.enter="setUser()">
+    <icon name="arrow_down"/>
+    <input id="name" placeholder="your secret here" v-model="user" @keyup.enter="setUser()">
     <span v-if="error">Нужно больше символов :)</span>
     <span class="button_show" @click.prevent="setUser()">Go</span>
   </div>
@@ -12,6 +12,7 @@
 </template>
 <script>
 import NotesyLogo from './NotesyLogo'
+import Icon from '../Icon'
 export default {
   name: 'NotesyCreate',
   data () {
@@ -21,7 +22,8 @@ export default {
     }
   },
   components: {
-    NotesyLogo
+    NotesyLogo,
+    Icon
   },
   methods: {
     setUser () {
@@ -40,11 +42,12 @@ export default {
   display flex
   justify-content center
   color white
+  height 100%
 .notesy_create_wrapper
   max-width 700px
   width 700px
   max-width 100vw
-  min-height 100vh
+  height 100%
   display flex
   flex-direction column
   align-items center

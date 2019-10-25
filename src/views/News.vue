@@ -85,7 +85,7 @@
         <embed src="https://wakatime.com/share/@cbea2116-1b02-482a-a5a3-a74fb1dcb77e/cddfcabb-5ba9-4acc-9579-43c9097c8db4.svg"/>
       </figure>
     </div>
-    <p>{{news}}</p>
+    <!-- <p>{{news}}</p> -->
     <!-- <button class="add_news" @click="showCreateDialog()"> Создать </button> -->
   </div>
 </template>

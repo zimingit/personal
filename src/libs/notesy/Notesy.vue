@@ -10,19 +10,6 @@
         labelColor="white"
         class="tool_item">
       </NotesyLogo>
-      <NotesyLogo v-if="showEditor"
-        @click.native="closeEditor()"
-        size="small"
-        backgroundColor="#80CBC4"
-        class="tool_item">
-          <icon name="checked" slot="icon" />
-      </NotesyLogo>
-      <NotesyLogo v-if="showEditor"
-        @click.native="closeEditorWithoutSave()"
-        backgroundColor="#80CBC4"
-        class="tool_item">
-          <icon name="close" slot="icon" />
-      </NotesyLogo>
     </div>
   </div>
   <transition name="fade-scale-up">
@@ -32,15 +19,14 @@
         <h3>{{day.date}}</h3>
       </div>
       <transition-group name="item-list" class="notes_container" tag="div">
-        <div class="note_wrapper"  v-for="(note, i) in day.notes" :key="note.id">
-          <div v-panleft class="note"
-              :class="{'hover': hoverIndex === i + day.date}"
+        <div class="note_wrapper" :class="{'hover': isHover(i, day)}"  v-for="(note, i) in day.notes" :key="note.id">
+          <div class="note" v-pan="{stopline: -80}"
               @mouseover="hoverIndex = i + day.date"
-              :style="{'border-left': note.color? `5px solid ${note.color}` : ''}"
+              :style="{'border-left': `5px solid ${note.color || '#ffffff'}`, 'box-shadow': `-1px 2px 5px ${(note.color || '#80CBC4') + '40' }`}"
               >
             <!-- note body -->
-            <h2>{{note.name}}</h2>
-            <div v-html="note.description"></div>
+            <h2 class="note_label">{{note.name}}</h2>
+            <div class="note_content" v-html="note.description"></div>
             <TagInput class="note_tags" :value="note.tags" decorator="#" :editable="false" @select="selectTag"/>
           </div>
           <!-- note toolbar -->
@@ -65,188 +51,19 @@
   </div>
   </transition>
   <transition name="fade-scale-down" tag="div" class="editor_wrapper">
-  <div class="editor editor_wrapper" v-if="showEditor">
-    <div class="note_tools">
-      <ColorPicker class="edit_tool_item" figure="circle" @change="setColor"/>
-      <div class="edit_tool_item settings" @click="toggleShowAdditional()">
-        <icon name="settings" slot="icon" invert="0" size="normal"/>
-      </div>
-    </div>
-    <!-- SideBar -->
-    <AppSideBar :show="showAdditionalConfig">
-      <div slot="content" class="additional_tools_wrapper">
-        <TagInput :value="noteToEdit.tags" decorator="#" @change="setTags"/>
-      </div>
-    </AppSideBar>
-    <editor-menu-bar :editor="editor" v-slot="{ commands, isActive }">
-      <div class="menubar">
-
-        <button title="bold"
-          class="menubar__button"
-          :class="{ 'is-active': isActive.bold() }"
-          @click="commands.bold"
-        >
-          <icon name="bold" />
-        </button>
-
-        <button title="italic"
-          class="menubar__button"
-          :class="{ 'is-active': isActive.italic() }"
-          @click="commands.italic"
-        >
-          <icon name="italic" />
-        </button>
-
-        <button title="strike"
-          class="menubar__button"
-          :class="{ 'is-active': isActive.strike() }"
-          @click="commands.strike"
-        >
-          <icon name="strike" />
-        </button>
-
-        <button title="underline"
-          class="menubar__button"
-          :class="{ 'is-active': isActive.underline() }"
-          @click="commands.underline"
-        >
-          <icon name="underline" />
-        </button>
-
-        <button title="code"
-          class="menubar__button"
-          :class="{ 'is-active': isActive.code() }"
-          @click="commands.code"
-        >
-          <icon name="code" />
-        </button>
-
-        <button title="paragraph"
-          class="menubar__button"
-          :class="{ 'is-active': isActive.paragraph() }"
-          @click="commands.paragraph"
-        >
-          <icon name="paragraph" />
-        </button>
-
-        <button title="H1"
-          class="menubar__button"
-          :class="{ 'is-active': isActive.heading({ level: 1 }) }"
-          @click="commands.heading({ level: 1 })"
-        >
-          <span>H1</span>
-        </button>
-
-        <button title="H2"
-          class="menubar__button"
-          :class="{ 'is-active': isActive.heading({ level: 2 }) }"
-          @click="commands.heading({ level: 2 })"
-        >
-          <span>H2</span>
-        </button>
-
-        <button title="H3"
-          class="menubar__button"
-          :class="{ 'is-active': isActive.heading({ level: 3 }) }"
-          @click="commands.heading({ level: 3 })"
-        >
-          <span>H3</span>
-        </button>
-
-        <button title="bullet list"
-          class="menubar__button"
-          :class="{ 'is-active': isActive.bullet_list() }"
-          @click="commands.bullet_list"
-        >
-          <icon name="ul" />
-        </button>
-
-        <button title="ordered list"
-          class="menubar__button"
-          :class="{ 'is-active': isActive.ordered_list() }"
-          @click="commands.ordered_list"
-        >
-          <icon name="ol" />
-        </button>
-
-        <button title="blockquote"
-          class="menubar__button"
-          :class="{ 'is-active': isActive.blockquote() }"
-          @click="commands.blockquote"
-        >
-          <icon name="quote" />
-        </button>
-
-        <button title="code block"
-          class="menubar__button"
-          :class="{ 'is-active': isActive.code_block() }"
-          @click="commands.code_block"
-        >
-          <icon name="code" />
-        </button>
-
-        <button title="hr"
-          class="menubar__button"
-          @click="commands.horizontal_rule"
-        >
-          <icon name="hr" />
-        </button>
-
-        <button title="undo"
-          class="menubar__button"
-          @click="commands.undo"
-        >
-          <icon name="undo" />
-        </button>
-
-        <button title="redo"
-          class="menubar__button"
-          @click="commands.redo"
-        >
-          <icon name="redo" />
-        </button>
-
-      </div>
-    </editor-menu-bar>
-    <div class="edit_fields">
-      <div class="name"><span>Название</span>
-        <input v-model="noteToEdit.name" placeholder=". . . . . .">
-      </div>
-      <div class="description">
-        <span>Описание</span>
-        <editor-content class="editor__content" :editor="editor" />
-      </div>
-    </div>
-  </div>
+    <NotesyEditor v-if="showEditor"
+                  :note="noteToEdit"
+                  @save="saveAndCloseEditor"
+                  @close="closeEditor"/>
   </transition>
 </div>
 </template>
 <script>
+import vPan from '@/directives/vPan.js'
 import NotesyLogo from './NotesyLogo'
-import ColorPicker from '../ColorPicker'
-import AppSideBar from '@/components/AppSideBar'
+import NotesyEditor from './NotesyEditor'
 import TagInput from '../TagInput'
 import Icon from '../Icon'
-import { Editor, EditorContent, EditorMenuBar } from 'tiptap'
-import {
-  Blockquote,
-  CodeBlock,
-  HardBreak,
-  Heading,
-  HorizontalRule,
-  OrderedList,
-  BulletList,
-  ListItem,
-  TodoItem,
-  TodoList,
-  Bold,
-  Code,
-  Italic,
-  Link,
-  Strike,
-  Underline,
-  History
-} from 'tiptap-extensions'
 export default {
   name: 'Notesy',
   props: ['userName'],
@@ -258,29 +75,7 @@ export default {
       showEditor: false,
       showAdditionalConfig: false,
       selectedTag: '',
-      hoverIndex: '',
-      editor: new Editor({
-        extensions: [
-          new Blockquote(),
-          new BulletList(),
-          new CodeBlock(),
-          new HardBreak(),
-          new Heading({ levels: [1, 2, 3] }),
-          new HorizontalRule(),
-          new ListItem(),
-          new OrderedList(),
-          new TodoItem(),
-          new TodoList(),
-          new Link(),
-          new Bold(),
-          new Code(),
-          new Italic(),
-          new Strike(),
-          new Underline(),
-          new History()
-        ],
-        content: ''
-      })
+      hoverIndex: ''
     }
   },
   firestore () {
@@ -290,63 +85,12 @@ export default {
   },
   components: {
     NotesyLogo,
-    EditorContent,
-    EditorMenuBar,
+    NotesyEditor,
     Icon,
-    ColorPicker,
-    AppSideBar,
     TagInput
   },
   directives: {
-    panleft: {
-      isLiteral: true,
-      bind (el) {
-        const stopline = -80
-        const touchStartHandler = (e) => {
-          el.dataset.xStart = e.changedTouches[0].clientX
-          el.dataset.transform = el.dataset.transform || 0
-        }
-        const touchMoveHandler = (e) => {
-          const path = parseInt(el.dataset.xStart) - e.changedTouches[0].clientX
-          const transform = parseInt(el.dataset.transform) - path
-          if (transform <= 0) {
-            requestAnimationFrame(() => {
-              el.style.transform = `translateX(${parseInt(transform)}px)`
-            })
-          }
-        }
-        const touchEndHandler = (e) => {
-          const path = parseInt(el.dataset.xStart) - e.changedTouches[0].clientX
-          const transform = parseInt(el.dataset.transform)
-          el.dataset.transform = transform - path
-          if (parseInt(el.dataset.transform) < stopline) {
-            el.style.transition = 'transform .3s ease-in-out'
-            el.style.transform = `translateX(${stopline}px)`
-            el.dataset.transform = stopline
-            el.classList.add('pinned')
-          } else {
-            el.style.transition = 'transform .1s ease-in-out'
-            el.style.transform = 'translateX(0)'
-            el.dataset.transform = 0
-            el.classList.remove('pinned')
-          }
-          setTimeout(() => {
-            el.style.transition = ''
-          }, 300)
-        }
-        el.addEventListener('touchstart', touchStartHandler)
-        el.addEventListener('touchmove', touchMoveHandler)
-        el.addEventListener('touchend', touchEndHandler)
-        el.$destroy = () => {
-          el.removeEventListener('touchstart', touchStartHandler)
-          el.removeEventListener('touchmove', touchMoveHandler)
-          el.removeEventListener('touchend', touchEndHandler)
-        }
-      },
-      unbind (el) {
-        el.$destroy()
-      }
-    }
+    'v-pan': vPan
   },
   created () {
     // Если пришли с user'ом и в localStorage сохранен user и они отличаются, то перезаписываем ls
@@ -355,14 +99,6 @@ export default {
     }
   },
   methods: {
-    toggleShowAdditional () {
-      this.showAdditionalConfig = !this.showAdditionalConfig
-    },
-    editNote (note) {
-      this.editor.setContent(note.description)
-      this.noteToEdit = note
-      this.showEditor = true
-    },
     create (noteToSave) {
       noteToSave.user = this.user
       this.$db.collection('notes')
@@ -388,6 +124,11 @@ export default {
       this.$set(this.sure, note.id, true)
       setTimeout(_ => { this.sure[note.id] = false }, 2000)
     },
+    // Создание и редактирование записей
+    editNote (note) {
+      this.noteToEdit = note
+      this.showEditor = true
+    },
     showEditorDialog () {
       let note = {
         date: new Date(),
@@ -395,14 +136,14 @@ export default {
         name: '',
         user: '',
         color: '',
-        tags: ['tags']
+        tags: []
       }
       this.editNote(note)
     },
-    closeEditor () {
+    saveAndCloseEditor (html) {
       this.showEditor = false
       if (this.noteToEdit !== {}) {
-        this.noteToEdit.description = this.editor.getHTML()
+        this.noteToEdit.description = html
         const currentNote = this.notes.find(note => note.id === this.noteToEdit.id)
         if (currentNote) {
           this.update(currentNote)
@@ -412,7 +153,7 @@ export default {
         this.noteToEdit = {}
       }
     },
-    closeEditorWithoutSave () {
+    closeEditor () {
       this.showEditor = false
     },
     getDateFromTimestamp (date) {
@@ -423,21 +164,17 @@ export default {
       joiner.push(date.getFullYear())
       return joiner.join('.')
     },
-    // ---- Методы установки доп.свойств ---- //
-    setColor (color) {
-      this.noteToEdit.color = color
-    },
-    setTags (tags) {
-      this.noteToEdit.tags = tags
-    },
-    clearFocus () {
-      this.hoverIndex = ''
+    isHover (i, day) {
+      return this.hoverIndex === i + day.date
     },
     // ----- Методы фильтрации ----- //
     selectTag (tag) {
       console.log('filterBy: ' + tag)
       // this.notes =this.$db.collection('notes').where('user', '==', this.user).orderBy('date')
       this.clearFocus()
+    },
+    clearFocus () {
+      this.hoverIndex = ''
     }
   },
   computed: {
@@ -463,9 +200,6 @@ export default {
       joiner.push(date.getFullYear())
       return joiner.join('.')
     }
-  },
-  beforeDestroy () {
-    this.editor.destroy()
   }
 }
 </script>
@@ -474,7 +208,7 @@ export default {
   display flex
   flex-direction column
   justify-content flex-start
-  margin-bottom 20px
+  margin-bottom 50px
   transition opacity .3s, transform .3s
   &.scaled_down
     opacity 0
@@ -492,38 +226,54 @@ export default {
         position sticky
         transform rotate(-90deg) translateX(-60px)
         top 40px
-    .notes_container
-      margin-left 15px
+
+.notes_container
+  margin-left 15px
+  display flex
+  flex-wrap wrap
+  .note_wrapper
+    @media (orientation: portrait)
+      min-width 95%
+      max-width 95%
+    .toolbar_container
+      position absolute
       display flex
-      flex-wrap wrap
-      .note_wrapper
-        display flex
-        position relative
-        @media (orientation: portrait)
-          min-width 95%
-          max-width 95%
-        .toolbar_container
-          position absolute
-          display flex
-          flex-direction column-reverse
-          right 0
-          bottom 10px
-          opacity 0
-          transform scale(0)
-          transform-origin right
-          transition opacity .5s, transform .3s
-          @media (orientation: portrait)
-            z-index 1
-            transform scale(1)
-            opacity 1
-          .tool
-            margin 2px
+      right 10px
+      bottom 10px
+      top 10px
+      opacity 0
+      transform scale(0)
+      transform-origin right
+      transition opacity .5s, transform .3s
+      @media (orientation: portrait)
+        right 0
+        z-index 1 !important
+        transform scale(1)
+        opacity 1
+        flex-direction column
+      .tool
+        margin 2px
+        top 0
+        position sticky
+
+.note_wrapper
+  display flex
+  position relative
+  flex-grow 1
+  &.hover
+    .note
+      max-height none
+    .toolbar_container
+      opacity 1
+      transform scale(1)
+      z-index 3
+
 .note
   position relative
   z-index 3
   display flex
-  flex-direction column
-  justify-content space-between
+  flex-direction row
+  flex-wrap wrap
   min-width 30%
   flex-grow 1
   max-width 100%
@@ -532,20 +282,31 @@ export default {
   overflow-y hidden
   background white
   margin 5px
-  // border-bottom 1px dotted #80cbc4
-  box-shadow: -1px 2px 5px #80cbc44f;
   @media (orientation: portrait)
     min-width 100%
     max-width 100%
-  &.hover
-    max-height none
-    // .toolbar_container
-    //   opacity 1
-    //   transform scale(1)
-  .note_tags
+    &:after
+      content ''
+      position absolute
+      top 5px
+      right 5px
+      background-image url('../../assets/icons/swipe.svg')
+      background-size cover
+      width 15px
+      height 15px
+      opacity .3
+  &_tags
+    flex-grow 1
     justify-content flex-end
-  h2
+  &_label
     padding 10px
+    flex-grow 1
+  &_content
+    flex-grow 1
+    text-align left
+    padding 0 10px
+    width calc(100% - 20px)
+
 .create
   display flex
   flex-direction row-reverse
@@ -555,115 +316,4 @@ export default {
   z-index 900
   .tool_item
     margin 5px
-
-.editor_wrapper
-  position fixed
-  top 0
-  left 0
-  width 100vw
-  height 100vh
-  z-index 10
-  .note_tools
-    position absolute
-    top 5px
-    right 0
-    z-index 3
-    display flex
-    align-items center
-    padding 0 10px 0 10px
-    border-radius 20px 0 0 20px
-    box-shadow -3px 1px 3px #E0E0E0
-    height 40px
-    .edit_tool_item
-      margin-left 10px
-      &.settings
-        padding 2px
-        border-radius 50%
-        background #80cbc4
-  &:before
-    content ''
-    position absolute
-    height 100vh
-    width 100vw
-    background white
-    right 0
-    top 0
-    z-index -1
-    pointer-events none
-  .additional_tools_wrapper
-    padding 10px
-    padding-top 50px
-  .menubar
-    padding-top 50px
-    button
-      min-width 35px
-      min-height 35px
-      background #80CBC4
-      border none
-      margin 5px
-      border none
-      outline none
-      cursor pointer
-      color white
-      text-align center
-      padding 5px
-      border-radius 4px
-      &:hover
-        box-shadow 1px 1px 2px #009688
-      &.is-active
-        border-radius 50%
-  .edit_fields
-    display flex
-    flex-direction column
-    align-items flex-start
-    .name
-      position relative
-      margin-top 10px
-      width 100%
-      span
-        position absolute
-        background white
-        padding 0 5px
-        font-size 15px
-        top -10px
-        left 10px
-      input
-        font-size 18px
-        outline none
-        color #616161
-        border-top .5px solid grey
-        border-left none
-        border-right none
-        border-bottom .5px solid grey
-        padding 10px 15px
-        min-width 100%
-        &:focus
-          border-bottom 1px solid #80CBC4
-    .description
-      position relative
-      margin-top 20px
-      width 100%
-      span
-        position absolute
-        z-index 1
-        border-radius 3px
-        background white
-        padding 0 5px
-        font-size 15px
-        top -10px
-        left 10px
-      .editor__content
-        border-top .5px solid grey
-        min-width 100%
-        max-height calc(100vh - 198px)
-        overflow-y auto
-        &::-webkit-scrollbar
-          width 5px
-          height 5px
-        &::-webkit-scrollbar-track
-          background transparent
-        &::-webkit-scrollbar-thumb
-          background #80CBC4
-          border-radius 2.5px
-
 </style>
