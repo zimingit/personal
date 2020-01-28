@@ -64,6 +64,8 @@ import NotesyLogo from './NotesyLogo'
 import NotesyEditor from './NotesyEditor'
 import TagInput from '../TagInput'
 import Icon from '../Icon'
+import $idb from './idbConstroller'
+
 export default {
   name: 'Notesy',
   props: ['userName'],
@@ -80,7 +82,7 @@ export default {
   },
   firestore () {
     return {
-      notes: this.$db.collection('notes').where('user', '==', this.user).orderBy('date')
+      // notes: this.$db.collection('notes').where('user', '==', this.user).orderBy('date', 'desc')
     }
   },
   components: {
@@ -93,32 +95,122 @@ export default {
     'v-pan': vPan
   },
   created () {
+    this.getFirebaseNotes()
     // Если пришли с user'ом и в localStorage сохранен user и они отличаются, то перезаписываем ls
     if (this.user && localStorage.user && this.user !== localStorage.user) {
       localStorage.user = this.user
     }
   },
   methods: {
-    create (noteToSave) {
+    getFirebaseNotes () {
+      this.$db.collection('notes')
+        .where('user', '==', this.user)
+        .orderBy('date')
+        .get()
+        .then(querySnapshot  => {
+          this.notes = querySnapshot.docs.map(doc => Object.assign({ id: doc.id }, doc.data()))
+          return this.updateFirebaseNotes()
+          console.log('FIREBASE LOADED')
+        })
+        .then(_ => {
+          return this.updateLocalBase()
+        })
+        .catch(e => {
+          $idb.getNotes(notes => {
+            this.notes = notes.sort((a, b) => this.getDateFromTimestamp(b.date) - this.getDateFromTimestamp(a.date))
+          })
+          console.log('LOCALDB LOADED')
+        })
+    },
+    // Создаем записи в firebase, которые были созданы локально без интернета
+    updateFirebaseNotes () {
+      return new Promise((resolve, reject) => {
+        const firebaseOnly = true
+        $idb.getNotes(notes => {
+          notes
+            .filter(n => n.id < 0 || n.needFirebaseUpdate || n.needFirebaseRemove)
+            .forEach(note => {
+              if (note.id < 0 && !note.needFirebaseRemove) {
+                return this.create(note, firebaseOnly)
+              } else if (note.needFirebaseUpdate) {
+                delete note.needFirebaseUpdate
+                return this.update(note, firebaseOnly)
+              } else if (note.needFirebaseRemove) {
+                delete note.needFirebaseRemove
+                return this.remove(note, firebaseOnly)
+              }
+            })
+          resolve(notes)
+        })
+      })
+    },
+    updateLocalBase () {
+      this.notes.forEach(note => {
+        $idb.setNote(note)
+      })
+      // this.$db.collection('notes')
+      //   .where('user', '==', this.user)
+      //   .orderBy('date')
+      //   .get()
+      //   .then(querySnapshot  => {
+      //     querySnapshot.docs.map(doc => Object.assign({ id: doc.id }, doc.data()))
+      //       .forEach(note => {
+      //         $idb.setNote(note)
+      //       })
+      //   })
+    },
+ 
+    create (noteToSave, fireBaseOnly) {
       noteToSave.user = this.user
-      this.$db.collection('notes')
-        .add(noteToSave)
-        .then(() => {
-          console.log('note created!')
-        })
+      try {
+        // throw new Error('no connection')
+        this.$db
+          .collection('notes')
+          .add(noteToSave)
+          .then(resonse => {
+            console.log('note created!', resonse)
+          })
+      } catch (e) {
+        if (fireBaseOnly) return
+        noteToSave.id = 0 - (this.notes.length)
+        noteToSave.date = { seconds: Math.floor(Date.now() / 1000) }
+        $idb.setNote(noteToSave)
+        this.notes.push(noteToSave)
+      }
     },
-    update (note) {
-      this.$db.collection('notes')
-        .doc(note.id)
-        .set(note)
-        .then(() => {
-          console.log('note updated!')
-        })
+    update (note, fireBaseOnly) {
+      try {
+        throw new Error('no connection')
+        this.$db
+          .collection('notes')
+          .doc(note.id)
+          .set(note)
+          .then(resonse => {
+            console.log('note updated!', resonse)
+          })
+      } catch (e) {
+        if (fireBaseOnly) return
+        note.needFirebaseUpdate = true
+        $idb.setNote(note)
+      }
     },
-    remove (note) {
-      this.$db.collection('notes')
-        .doc(note.id)
-        .delete()
+    remove (note, fireBaseOnly) {
+      try {
+        throw new Error('no connection')
+        this.$db
+          .collection('notes')
+          .doc(note.id)
+          .delete()
+          .then(() => {
+            console.log('note deleted!')
+            $idb.delNote(note)
+          })
+      } catch (e) {
+        if (fireBaseOnly) return
+        this.notes = this.notes.filter(n => n.id !== note.id)
+        note.needFirebaseRemove = true
+        $idb.setNote(note)
+      }
     },
     toggleSure (note) {
       this.$set(this.sure, note.id, true)
@@ -157,12 +249,12 @@ export default {
       this.showEditor = false
     },
     getDateFromTimestamp (date) {
-      let joiner = []
-      date = date.toDate()
-      joiner.push(date.getDate())
-      joiner.push(date.getMonth())
-      joiner.push(date.getFullYear())
-      return joiner.join('.')
+      const toDate = (secs) => new Date(secs * 1000)
+      return toDate(date.seconds)
+    },
+    getDateFromTimestampFormatted (date) {
+      date = this.getDateFromTimestamp(date)
+      return [date.getDate(), date.getMonth() + 1, date.getFullYear()].join('.')
     },
     isHover (i, day) {
       return this.hoverIndex === i + day.date
@@ -180,8 +272,8 @@ export default {
   computed: {
     noteByDatesComputed () {
       let notesByDate = {}
-      const getDate = (date) => this.getDateFromTimestamp(date)
-      this.notes.forEach(note => {
+      const getDate = (date) => this.getDateFromTimestampFormatted(date)
+      this.notes.filter(n => !n.needFirebaseRemove).forEach(note => {
         if (!notesByDate[getDate(note.date)]) {
           notesByDate[getDate(note.date)] = {
             date: getDate(note.date),
