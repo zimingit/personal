@@ -21,23 +21,25 @@
     -->
     <div class="news_item_wrapper">
       <div class="news_item">
-        <h1 class="news_item_label">MSK VUE.JS MEETUP #2</h1>
-        <span class="news_item_number">01</span>
+        <span class="news_item_number">04</span>
+        <h1 class="news_item_label" :style="getTextShadow(0)">ЧТО ПРОИСХОДИТ?</h1>
         <div class="news_item_description">
           <div class="news_item_description_icon">
           </div>
           <div class="news_item_description_content">
             <p>
-            Вторая по счету встреча для разработчиков, где будем обсуждать прогрессивный фреймворк Vue.js в приятной компании за едой и напитками.
+            Уверен, каждый задается вопросом "Где обновления, Алёша?". Да, в последнее время с ними печально :(<br/>
+              Нормальный бек будет не скоро, а офлайн режим работы Notesy на подходе.<br/>
+              Как-то так :3
             <br/><br/>
             <br/><br/>
-            <strong>Когда? </strong> 15 августа, четверг
-            <strong>Где? </strong> Москва, ул. Балчуг, 7
-            <strong>Ты там будешь? </strong> Конечно :)
+            <strong>Когда? </strong> Нинаю
+            <strong>Где? </strong> Тута
+            <strong>Ты там будешь? </strong> Часть меня точно будет :)
             <br/><br/>
             <br/><br/>
             </p>
-            <strong>Где почитать подробнее? </strong> <a href='https://voximplant.timepad.ru/event/1022185'>*Подготовленная кликабельная ссылка*</a>
+            <strong>Где посмотреть подробнее? </strong> <a href='https://alekseyzimin.com/#/Projects/Notesy'>*Подготовленная кликабельная ссылка*</a>
           </div>
         </div>
       </div>
@@ -45,8 +47,8 @@
 
     <div class="news_item_wrapper">
       <div class="news_item">
-        <span class="news_item_number">02</span>
-        <h1 class="news_item_label">MSK VUE.JS MEETUP #3</h1>
+        <span class="news_item_number">03</span>
+        <h1 class="news_item_label" :style="getTextShadow(1)">MSK VUE.JS MEETUP #3</h1>
         <div class="news_item_description">
           <div class="news_item_description_icon">
           </div>
@@ -74,8 +76,32 @@
 
     <div class="news_item_wrapper">
       <div class="news_item">
-        <span class="news_item_number">03</span>
-        <h1 class="news_item_label">АКТИВНОСТЬ</h1>
+        <span class="news_item_number">02</span>
+        <h1 class="news_item_label" :style="getTextShadow(2)">MSK VUE.JS MEETUP #2</h1>
+        <div class="news_item_description">
+          <div class="news_item_description_icon">
+          </div>
+          <div class="news_item_description_content">
+            <p>
+            Вторая по счету встреча для разработчиков, где будем обсуждать прогрессивный фреймворк Vue.js в приятной компании за едой и напитками.
+            <br/><br/>
+            <br/><br/>
+            <strong>Когда? </strong> 15 августа, четверг
+            <strong>Где? </strong> Москва, ул. Балчуг, 7
+            <strong>Ты там будешь? </strong> Конечно :)
+            <br/><br/>
+            <br/><br/>
+            </p>
+            <strong>Где почитать подробнее? </strong> <a href='https://voximplant.timepad.ru/event/1022185'>*Подготовленная кликабельная ссылка*</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="news_item_wrapper">
+      <div class="news_item">
+        <span class="news_item_number">01</span>
+        <h1 class="news_item_label" :style="getTextShadow(3)">АКТИВНОСТЬ</h1>
         <div class="news_item_description">
           <div class="news_item_description_icon">
           </div>
@@ -97,9 +123,12 @@
   </div>
 </template>
 <script>
+import _ from 'lodash'
+const colors = ['#ea4335', '#fbbc05', '#34a853', '#00bcd4', '#9c27b0', '#f44336', '#03a9f4', '#009688', '#8bc34a', '#cddc39', '#ff9800']
 export default {
   data () {
     return {
+      colors: _.shuffle(colors),
       news: [],
       createNews: false,
       newsData: {
@@ -119,6 +148,9 @@ export default {
     console.log(this.$db)
   },
   methods: {
+    getTextShadow (i) {
+      return {'text-shadow': `3px 3px 0 ${this.colors[i]}`}
+    },
     showCreateDialog () {
       this.createNews = true
       document.getElementById('app').scrollTop = 0
@@ -154,6 +186,9 @@ figure
     letter-spacing 80px
     position fixed
     top 20%
+    left 0
+    width 100%
+    text-align center
     z-index -1
     color #FAFAFA
     text-shadow 0px 5px 20px #e0e0e0
@@ -181,7 +216,9 @@ figure
 
 .news_item_number
   position absolute
-  left -50px
+  height 50px
+  width 50px
+  left -55px
   top -30px
   transform rotate(-90deg)
   font-size 40px
@@ -247,11 +284,17 @@ figure
 // Хардкоды фоновых картинок :(
 .news_item_wrapper
   &:nth-child(2)
-    .news_item_description_icon
-      background-image url('../assets/news/voximplant.jpg')
+    .news_item
       &:hover
-        background-image url('../assets/news/voximplant_meetup_1.jpg')
-        background-position center 80%
+        .news_item_description_icon
+          background-size 100%
+    .news_item_description_icon
+      background-image url('../assets/news/notesy.jpg')
+      background-position center 53%
+      background-size 350%
+      &:hover
+        background-image url('../assets/news/notesy_white.jpg')
+        background-position center 30%
   &:nth-child(3)
     &:hover
       .news_item_description_icon
@@ -262,6 +305,12 @@ figure
         background-image url('../assets/news/pavel_face.jpg')
         background-position center 20%
   &:nth-child(4)
+    .news_item_description_icon
+      background-image url('../assets/news/voximplant.jpg')
+      &:hover
+        background-image url('../assets/news/voximplant_meetup_1.jpg')
+        background-position center 80%
+  &:nth-child(5)
     &:hover
       .news_item_description_icon
         background-position 40% 60%
