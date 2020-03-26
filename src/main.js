@@ -8,6 +8,9 @@ import 'firebase/firestore'
 import { firestorePlugin } from 'vuefire'
 Vue.use(firestorePlugin)
 
+import vRipple from './directives/vRipple'
+Vue.use(vRipple)
+
 Vue.config.productionTip = false
 // Vue.use(qs)
 firebase.initializeApp({

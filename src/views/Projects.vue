@@ -1,6 +1,6 @@
 <template>
   <div class="projects_layout">
-    <div  v-for="(project, i) in projects" :key="project.name" class="project_item"
+    <div v-for="(project, i) in projects" :key="project.name" class="project_item"
     :style="getBackground(i, project)">
       <span class="pseudo top"></span>
       <span class="pseudo bot"></span>
