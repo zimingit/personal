@@ -15,6 +15,7 @@ export default {
   name: 'appPowerOff',
   props: ['color']
 }
+
 </script>
 <style lang="stylus" scoped>
 .layout
